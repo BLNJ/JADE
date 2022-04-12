@@ -1,7 +1,7 @@
 ![JADE Logo](https://user-images.githubusercontent.com/3627916/162974413-7de6a7b1-2540-4c2d-b275-ea4382ec0f8c.png)<br />
 <br /><br />
 This is just another DMG (GameBoy) emulator.<br />
-I started working on this out of interest in how something like this would be programmed after watching [this video](https://www.youtube.com/watch?v=HyzD8pNlpwI "this video"), but spiralled out of control fast.<br />
+I started working on this out of interest in how something like this would be programmed after watching [this video (The Ultimate Game Boy Talk (33c3))](https://www.youtube.com/watch?v=HyzD8pNlpwI "this video"), but spiralled out of control fast.<br />
 The whole project is currently in its third refactor, which I have been working on from time to time in the past 4 years.<br />
 This is not meant to solve any problem or re-invent the wheel, I just like working on this.<br />
 
