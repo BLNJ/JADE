@@ -1,0 +1,81 @@
+﻿<Window x:Class="JADE.UX.WPF.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JADE.UX.WPF.Windows"
+        xmlns:Core=""
+        mc:Ignorable="d"
+        Title="MainWindow" Height="517" Width="905">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+    <Window.DataContext>
+        <Core:Device/>
+    </Window.DataContext>
+    <Grid>
+        <Button x:Name="btnExecute" Content="Execute" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="btnExecute_Click"/>
+        <Button x:Name="btnOpen" Content="Button" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="75" Click="btnOpen_Click"/>
+
+        <TextBlock HorizontalAlignment="Left" Margin="36,94,0,0" TextWrapping="Wrap" Text="{Binding Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
+
+        <GroupBox Header="CPU Registers" HorizontalAlignment="Left" Height="158" Width="200" Margin="262,10,0,0" VerticalAlignment="Top" DataContext="{Binding CPU.Registers, Mode=OneWay}">
+            <UniformGrid Columns="3">
+                <UniformGrid Grid.Column="0" Columns="1">
+                    <TextBlock Text="{Binding A, Mode=OneWay, StringFormat='A: \{0:X2}'}"/>
+                    <TextBlock Text="{Binding B, Mode=OneWay, StringFormat='B: \{0:X2}'}"/>
+                    <TextBlock Text="{Binding C, Mode=OneWay, StringFormat='C: \{0:X2}'}"/>
+                    <TextBlock Text="{Binding D, Mode=OneWay, StringFormat='D: \{0:X2}'}"/>
+                    <TextBlock Text="{Binding E, Mode=OneWay, StringFormat='E: \{0:X2}'}"/>
+                    <TextBlock Text="{Binding H, Mode=OneWay, StringFormat='H: \{0:X2}'}"/>
+                    <TextBlock Text="{Binding L, Mode=OneWay, StringFormat='L: \{0:X2}'}"/>
+                </UniformGrid>
+
+                <UniformGrid Grid.Column="1" Columns="1">
+                    <TextBlock Text="{Binding AF, Mode=OneWay, StringFormat='AF: \{0:X4}'}"/>
+                    <TextBlock Text="{Binding BC, Mode=OneWay, StringFormat='BC: \{0:X4\}'}"/>
+                    <TextBlock Text="{Binding DE, Mode=OneWay, StringFormat='DE: \{0:X4\}'}"/>
+                    <TextBlock Text="{Binding HL, Mode=OneWay, StringFormat='HL: \{0:X4\}'}"/>
+                    <TextBlock Text="{Binding PC, Mode=OneWay, StringFormat='PC: \{0:X4\}'}"/>
+                    <TextBlock Text="{Binding SP, Mode=OneWay, StringFormat='SP: \{0:X4\}'}"/>
+                </UniformGrid>
+
+                <UniformGrid Grid.Column="2" Columns="1" UseLayoutRounding="False">
+                    <CheckBox Content="Zero" IsChecked="{Binding Flag_Zero, Mode=OneWay}" IsHitTestVisible="False"/>
+                    <CheckBox Content="Negation" IsChecked="{Binding Flag_Negation, Mode=OneWay}" IsHitTestVisible="False"/>
+                    <CheckBox Content="HalfCarry" IsChecked="{Binding Flag_HalfCarry, Mode=OneWay}" IsHitTestVisible="False"/>
+                    <CheckBox Content="Carry" IsChecked="{Binding Flag_Carry, Mode=OneWay}" IsHitTestVisible="False"/>
+                </UniformGrid>
+            </UniformGrid>
+        </GroupBox>
+
+        <GroupBox Header="CPU Interrupts" Margin="467,10,290,156" Width="140" DataContext="{Binding CPU, Mode=OneWay}">
+            <UniformGrid Columns="1">
+                <CheckBox Grid.Column="0" Content="Master" IsChecked="{Binding InterruptMasterEnable, Mode=OneWay}" IsHitTestVisible="False" VerticalAlignment="Center"/>
+
+                <GroupBox Header="Interrupt Enabled" Grid.Column="0" VerticalAlignment="Center">
+                    <UniformGrid Columns="1">
+                        <CheckBox Grid.Row="0" Content="Joypad" IsChecked="{Binding InterruptEnabled.Joypad, Mode=OneWay}" IsHitTestVisible="False" MinHeight="15"/>
+                        <CheckBox Grid.Row="1" Content="Serial" IsChecked="{Binding InterruptEnabled.Serial, Mode=OneWay}" IsHitTestVisible="False" MinHeight="15"/>
+                        <CheckBox Grid.Row="2" Content="Timer" IsChecked="{Binding InterruptEnabled.Timer, Mode=OneWay}" IsHitTestVisible="False" MinHeight="15"/>
+                        <CheckBox Grid.Row="3" Content="VBlank" IsChecked="{Binding InterruptEnabled.VBlank, Mode=OneWay}" IsHitTestVisible="False" MinHeight="15"/>
+                    </UniformGrid>
+                </GroupBox>
+
+                <GroupBox Header="Interrupt Flags" Grid.Column="0" VerticalAlignment="Center">
+                    <UniformGrid Columns="1">
+                        <CheckBox Grid.Row="0" Content="Joypad" IsChecked="{Binding InterruptFlags.Joypad, Mode=OneWay}" IsHitTestVisible="False" MinHeight="15"/>
+                        <CheckBox Grid.Row="1" Content="Serial" IsChecked="{Binding InterruptFlags.Serial, Mode=OneWay}" IsHitTestVisible="False" MinHeight="15"/>
+                        <CheckBox Grid.Row="2" Content="Timer" IsChecked="{Binding InterruptFlags.Timer, Mode=OneWay}" IsHitTestVisible="False" MinHeight="15"/>
+                        <CheckBox Grid.Row="3" Content="VBlank" IsChecked="{Binding InterruptFlags.VBlank, Mode=OneWay}" IsHitTestVisible="False" MinHeight="15"/>
+                    </UniformGrid>
+                </GroupBox>
+            </UniformGrid>
+        </GroupBox>
+
+        <Border BorderThickness="1" BorderBrush="Black" VerticalAlignment="Top" Margin="206,173,435,0" Height="256" Width="256">
+            <Image x:Name="imgRender"/>
+        </Border>
+
+    </Grid>
+</Window>
