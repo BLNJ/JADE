@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace JADE.Core.Instructions.Interpreter.Misc
 {
-    public class Misc_8_SWAP
+    public static class Misc_8_SWAP
     {
         [Instruction(0x30, "SWAP B", isExtendedInstruction: true)]
         [Instruction(0x31, "SWAP C", isExtendedInstruction: true)]

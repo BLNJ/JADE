@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace JADE.Core.Instructions.Interpreter.Load
 {
-    public class Load_8_LDI
+    public static class Load_8_LDI
     {
         [Instruction(0x2A, "LDI A, (HL)")]
         [Instruction(0x22, "LDI (HL), A")]

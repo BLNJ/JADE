@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace JADE.Core.Instructions.Interpreter.Misc
 {
-    public class Misc_8
+    public static class Misc_8
     {
         [Instruction(0x3F, "CCF")]
         public class CCF : IInstruction
