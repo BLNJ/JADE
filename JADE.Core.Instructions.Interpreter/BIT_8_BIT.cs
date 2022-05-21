@@ -86,7 +86,7 @@ namespace JADE.Core.Instructions.Interpreter
         {
             public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
             {
-                ParameterRegister register = Helpers.BitHelper.OpcodeToRegister(opCode);
+                ParameterRegister register = Helpers.BitHelper.OpCodeLowerNibbleToRegister(opCode);
                 if(register == ParameterRegister.HL)
                 {
                     parametersList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.HL);
@@ -101,8 +101,8 @@ namespace JADE.Core.Instructions.Interpreter
 
             public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
             {
-                ParameterRegister register = Helpers.BitHelper.OpcodeToRegister(opCode);
-                byte bitPosition = Helpers.BitHelper.OpCodeToBitPosition(opCode);
+                ParameterRegister register = Helpers.BitHelper.OpCodeLowerNibbleToRegister(opCode);
+                byte bitPosition = Helpers.BitHelper.OpCodeUpperNibbleToBitPosition(opCode);
 
                 byte value = (byte)parametersList[0].Value;
 
