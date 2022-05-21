@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JADE.Helpers;
 
 namespace JADE.Core.Instructions.Interpreter.Helpers
 {
@@ -20,11 +21,9 @@ namespace JADE.Core.Instructions.Interpreter.Helpers
             return (byte)((opCode & 0x38) >> 3);
         }
 
-        public static JADE.Core.Instructions.Bridge.Register.ParameterRegister OpcodeToRegister(byte opCode)
+        private static JADE.Core.Instructions.Bridge.Register.ParameterRegister opCodePartToRegister(byte opCodePart)
         {
-            byte registerBitsValue = getRegisterBitsValue(opCode);
-
-            switch(registerBitsValue)
+            switch(opCodePart)
             {
                 case 7:
                     return Bridge.Register.ParameterRegister.A;
@@ -44,11 +43,27 @@ namespace JADE.Core.Instructions.Interpreter.Helpers
                     return Bridge.Register.ParameterRegister.HL;
 
                 default:
-                    throw new NotImplementedException("Unknown registerBitsValue: " + registerBitsValue);
+                    throw new NotImplementedException("Unknown registerBitsValue: " + opCodePart);
             }
         }
 
-        public static byte OpCodeToBitPosition(byte opCode)
+        public static JADE.Core.Instructions.Bridge.Register.ParameterRegister OpCodeUpperNibbleToRegister(byte opCode)
+        {
+            byte upperNibble = opCode.GetUpper();
+            Bridge.Register.ParameterRegister register = opCodePartToRegister(upperNibble);
+
+            return register;
+        }
+
+        public static JADE.Core.Instructions.Bridge.Register.ParameterRegister OpCodeLowerNibbleToRegister(byte opCode)
+        {
+            byte lowerNibble = opCode.GetLower();
+            Bridge.Register.ParameterRegister register = opCodePartToRegister(lowerNibble);
+
+            return register;
+        }
+
+        public static byte OpCodeUpperNibbleToBitPosition(byte opCode)
         {
             byte bitPosition = getBitPositionBitsValue(opCode);
             return bitPosition;
