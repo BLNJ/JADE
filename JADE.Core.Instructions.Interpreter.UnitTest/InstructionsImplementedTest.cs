@@ -103,5 +103,48 @@ namespace JADE.Core.Instructions.Interpreter.UnitTest
                 Assert.Pass();
             }
         }
+
+        [Test]
+        public void CheckInstructionDoubles()
+        {
+            Dictionary<(bool, int), List<string>> temp = new Dictionary<(bool, int), List<string>>();
+
+            for(int i = 0; i < this.instructionAttributes.Count; i++)
+            {
+                Bridge.InstructionAttribute instruction = this.instructionAttributes[i];
+
+                if(temp.ContainsKey((instruction.IsExtendedInstruction, instruction.OpCode)))
+                {
+                    temp[(instruction.IsExtendedInstruction, instruction.OpCode)].Add(instruction.Mnemoric);
+                }
+                else
+                {
+                    temp.Add((instruction.IsExtendedInstruction, instruction.OpCode), new List<string>());
+                }
+            }
+
+            if(temp.Count > 0)
+            {
+                string message = "";
+
+                int doublesCount = 0;
+                foreach(KeyValuePair<(bool, int), List<string>> kvp in temp)
+                {
+                    if (kvp.Value.Count > 0)
+                    {
+                        message += string.Format("[{0}, {1}] {2}{3}", kvp.Key.Item1, kvp.Key.Item2.ToString("X2"), kvp.Value.Count, Environment.NewLine);
+                        doublesCount++;
+                    }
+                }
+
+                message = string.Format("{0} Doubles: ", doublesCount) + message;
+
+                Assert.Fail(message);
+            }
+            else
+            {
+                Assert.Pass();
+            }
+        }
     }
 }
