@@ -15,7 +15,7 @@ namespace JADE.Core.Instructions.Interpreter
         [Instruction(0xC8, "RET Z")]
         [Instruction(0xD0, "RET NC")]
         [Instruction(0xD8, "RET C")]
-        public class x : IInstruction
+        public class RET_x : IInstruction
         {
             public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
             {
