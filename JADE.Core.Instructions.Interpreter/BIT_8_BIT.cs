@@ -109,12 +109,15 @@ namespace JADE.Core.Instructions.Interpreter
                 RegisterCommit registerCommit = new RegisterCommit();
                 InstructionMethods.Bit(registerCommit, bitPosition, value);
 
+                changesList.AddRegisterCommit(registerCommit);
                 if(register != ParameterRegister.HL)
                 {
+                    changesList.AddRegister(register, value);
                     return 8;
                 }
                 else
                 {
+                    changesList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.HL, value);
                     return 16;
                 }
             }
