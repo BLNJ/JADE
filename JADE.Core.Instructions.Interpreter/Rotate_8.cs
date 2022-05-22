@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JADE.Core.Instructions.Interpreter.Rotate
+namespace JADE.Core.Instructions.Interpreter
 {
     public static class Rotate_8
     {
@@ -53,7 +53,7 @@ namespace JADE.Core.Instructions.Interpreter.Rotate
             {
                 ParameterRegister registerSource = Helpers.BitHelper.OpCodeUpperNibbleToRegister(opCode);
 
-                if(registerSource == ParameterRegister.HL)
+                if (registerSource == ParameterRegister.HL)
                 {
                     parametersList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.HL);
                 }
@@ -78,10 +78,10 @@ namespace JADE.Core.Instructions.Interpreter.Rotate
                 RegisterCommit commit = new RegisterCommit();
                 byte? rotatedValue = null;
 
-                switch(operationCode)
+                switch (operationCode)
                 {
                     case 0:
-                        if(operationLowerNibble > 0x7)
+                        if (operationLowerNibble > 0x7)
                         {
                             rotatedValue = InstructionMethods.RotateRightCarry(commit, value);
                         }
@@ -102,14 +102,14 @@ namespace JADE.Core.Instructions.Interpreter.Rotate
                         break;
                 }
 
-                if(rotatedValue == null)
+                if (rotatedValue == null)
                 {
                     throw new Exception("rotatedValue is null");
                 }
 
                 changesList.AddRegisterCommit(commit);
 
-                if(registerSource == ParameterRegister.HL)
+                if (registerSource == ParameterRegister.HL)
                 {
                     changesList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.HL, rotatedValue.Value);
                     return 16;
