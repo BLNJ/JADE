@@ -26,11 +26,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Instructions", "Instruction
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JADE.Core.Bridge", "JADE.Core.Bridge\JADE.Core.Bridge.csproj", "{B48785DA-3B93-49F2-B2A4-35492EDA8A50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JADE.Core.Instructions.Interpreter", "JADE.Core.Instructions.Interpreter\JADE.Core.Instructions.Interpreter.csproj", "{2763E9B3-5366-40BE-814F-33DFAFAF4F21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JADE.Core.Instructions.Interpreter", "JADE.Core.Instructions.Interpreter\JADE.Core.Instructions.Interpreter.csproj", "{2763E9B3-5366-40BE-814F-33DFAFAF4F21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JADE.Helpers", "JADE.Helpers\JADE.Helpers.csproj", "{47ED380F-9DB7-4DC7-BC7D-A9F0C59ED0FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JADE.Helpers", "JADE.Helpers\JADE.Helpers.csproj", "{47ED380F-9DB7-4DC7-BC7D-A9F0C59ED0FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JADE.UI.WinConsole", "JADE.UI.WinConsole\JADE.UI.WinConsole.csproj", "{30F5C290-3757-4282-807F-880A980EE710}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JADE.UI.WinConsole", "JADE.UI.WinConsole\JADE.UI.WinConsole.csproj", "{30F5C290-3757-4282-807F-880A980EE710}"
+EndProject
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
