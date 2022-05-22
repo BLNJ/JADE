@@ -82,5 +82,20 @@ namespace JADE.Core.Instructions.Interpreter
                 return 8;
             }
         }
+
+        [Instruction(0xD9, "RETI")]
+        public class RETI : IInstruction
+        {
+            public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
+            {
+                throw new NotImplementedException();
+            }
+
+            public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
+            {
+                throw new NotImplementedException();
+                return 8;
+            }
+        }
     }
 }
