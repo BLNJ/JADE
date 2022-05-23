@@ -18,6 +18,7 @@ namespace JADE.Core.Instructions.Interpreter.ArithmeticLogicUnit
         [Instruction(0x9C, "SBC A, H")]
         [Instruction(0x9D, "SBC A, L")]
         [Instruction(0x9E, "SBC A, (HL)")]
+        [Instruction(0xDE, "SBC A, n")]
         public class x_x : IInstruction
         {
             public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
@@ -51,6 +52,9 @@ namespace JADE.Core.Instructions.Interpreter.ArithmeticLogicUnit
                         break;
                     case 0x9E:
                         parametersList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.HL);
+                        break;
+                    case 0xDE:
+                        parametersList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedByte);
                         break;
                 }
 
