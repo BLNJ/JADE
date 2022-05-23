@@ -128,5 +128,34 @@ namespace JADE.Core.Instructions.Interpreter.Load
                 }
             }
         }
+
+        [Instruction(0x02, "LD (BC), A")]
+        [Instruction(0x12, "LD (DE), A")]
+        public class nn_relative : IInstruction
+        {
+            public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
+            {
+                parametersList.AddRegister(ParameterRegister.A);
+                return true;
+            }
+
+            public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
+            {
+                byte registerA = (byte)parametersList[0].Value;
+
+                ParameterRegister destinationRegister;
+                if(opCode == 0x02)
+                {
+                    destinationRegister = ParameterRegister.BC;
+                }
+                else
+                {
+                    destinationRegister = ParameterRegister.DE;
+                }
+
+                changesList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, destinationRegister, registerA);
+                return 8;
+            }
+        }
     }
 }
