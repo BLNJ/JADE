@@ -123,22 +123,22 @@ namespace JADE.Core.Instructions.Interpreter.UnitTest
                 }
             }
 
-            if(temp.Count > 0)
+
+            string message = "";
+
+            int doublesCount = 0;
+            foreach (KeyValuePair<(bool, int), List<string>> kvp in temp)
             {
-                string message = "";
-
-                int doublesCount = 0;
-                foreach(KeyValuePair<(bool, int), List<string>> kvp in temp)
+                if (kvp.Value.Count > 0)
                 {
-                    if (kvp.Value.Count > 0)
-                    {
-                        message += string.Format("[{0}, {1}] {2}{3}", kvp.Key.Item1, kvp.Key.Item2.ToString("X2"), kvp.Value.Count, Environment.NewLine);
-                        doublesCount++;
-                    }
+                    message += string.Format("[{0}, {1}] {2}{3}", kvp.Key.Item1, kvp.Key.Item2.ToString("X2"), kvp.Value.Count, Environment.NewLine);
+                    doublesCount++;
                 }
+            }
+            message = string.Format("{0} Doubles: ", doublesCount) + message;
 
-                message = string.Format("{0} Doubles: ", doublesCount) + message;
-
+            if (doublesCount > 0)
+            {
                 Assert.Fail(message);
             }
             else
