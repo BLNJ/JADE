@@ -100,7 +100,7 @@ namespace JADE.Core.Registers
         {
 
         }
-        public override void Reset()
+        public void Reset()
         {
             this.Mode = ModeFlag.VBlank;
         }

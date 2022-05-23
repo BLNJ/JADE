@@ -1,18 +1,50 @@
-﻿using JADE.Core.Bridge.Register;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using JADE.Core.Bridge.MemoryManagementUnit;
-using JADE.Core.Bridge;
 
 namespace JADE.Core.Registers
 {
-    public class CPURegisters : CPURegistersBase
+    public class CPURegisters : INotifyPropertyChanged
     {
+        ushort pc;
+        /// <summary>
+        /// Program Counter
+        /// </summary>
+        public ushort PC
+        {
+            get
+            {
+                return this.pc;
+            }
+            set
+            {
+                this.pc = value;
+                OnPropertyChanged();
+            }
+        }
+
+        ushort sp;
+        /// <summary>
+        /// Stack Pointer
+        /// Points to top of stack (grows from top to bottom)
+        /// </summary>
+        public ushort SP
+        {
+            get
+            {
+                return this.sp;
+            }
+            set
+            {
+                this.sp = value;
+                OnPropertyChanged();
+            }
+        }
+
         #region 16-Bit Registers
         public ushort AF
         {
@@ -275,11 +307,13 @@ namespace JADE.Core.Registers
         }
         #endregion
 
-        public CPURegisters(MMUBase mmu) : base(mmu)
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public CPURegisters(MemoryManagementUnit.MMU mmu)
         {
             Reset();
         }
-        public override void Reset()
+        public void Reset()
         {
             this.AF = 0x0;
             this.BC = 0x0;
@@ -295,10 +329,19 @@ namespace JADE.Core.Registers
             //this.L = 0x0;
             //this.F = 0x0;
 
-            //this.PC = 0x0; //0x100 ?
-            //this.SP = 0x0; //0xFFFE ?
+            this.PC = 0x0; //0x100 ?
+            this.SP = 0x0; //0xFFFE ?
 
             this.F = 0x0;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         public enum Flag : byte

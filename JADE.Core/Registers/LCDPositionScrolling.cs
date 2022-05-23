@@ -82,10 +82,5 @@ namespace JADE.Core.Registers
         {
 
         }
-
-        public override void Reset()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

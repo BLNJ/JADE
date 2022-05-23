@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using JADE.IO;
-using JADE.Core.Bridge.MemoryManagementUnit;
 
 namespace JADE.Core.MemoryManagementUnit
 {
@@ -37,14 +36,26 @@ namespace JADE.Core.MemoryManagementUnit
 /// <summary>
 /// Memory Management Unit
 /// </summary>
-    public class MMU : MMUBase
+    public class MMU
     {
-        public MMU(Device device) : base(device, 0x10000)
+        public List<MappedMemoryRegion> MappedMemory
         {
-            //var stream = System.IO.Stream.Synchronized(Stream);
+            get;
+            private set;
+        }
+        public MemoryManagementUnitStream Stream
+        {
+            get;
+            private set;
         }
 
-        public override void Reset()
+        public MMU(Device device)
+        {
+            this.MappedMemory = new List<MappedMemoryRegion>();
+            this.Stream = new MemoryManagementUnitStream(this, 0x10000);
+        }
+
+        public void Reset()
         {
             for (int i = 0; i < this.MappedMemory.Count; i++)
             {
@@ -57,7 +68,7 @@ namespace JADE.Core.MemoryManagementUnit
             //TODO Move Memory Regions to corresponding devices
 
             //Bootstrap
-            AddMappedStream(MappedMemory.Name.Bootstrap, 0x0, new MemoryStream(Properties.Resources.bootstrap, false));
+            AddMappedStream(MappedMemoryRegion.Name.Bootstrap, 0x0, new MemoryStream(Properties.Resources.bootstrap, false));
 
             //VRAM
             //AddMappedStream(MemoryManagementUnit.MappedMemory.Name.VRAM, 0x8000, 0x9FFF, random: true);
@@ -69,17 +80,86 @@ namespace JADE.Core.MemoryManagementUnit
             //AddMappedStream(MemoryManagementUnit.MappedMemory.Name.IO, 0xFF00, 0xFF7F, random: false);
 
             //Unusable
-            AddMappedStream(MappedMemory.Name.Unusable, 0xFEA0, 0x60, random: false);
+            AddMappedStream(MappedMemoryRegion.Name.Unusable, 0xFEA0, 0x60, random: false);
 
             //Zero-Page
-            AddMappedStream(MappedMemory.Name.ZeroPage, 0xFF80, 0x80, random: false);
+            AddMappedStream(MappedMemoryRegion.Name.ZeroPage, 0xFF80, 0x80, random: false);
 
             this.Stream.Position = 0;
         }
 
-        public override void Step()
+        public MappedMemoryRegion FindMappedMemory(MappedMemoryRegion.Name name)
         {
-            throw new NotImplementedException("Not needed");
+            for (int i = 0; i < this.MappedMemory.Count; i++)
+            {
+                MappedMemoryRegion mappedIO = this.MappedMemory[i];
+
+                if (mappedIO.RegionName == name)
+                {
+                    return mappedIO;
+                }
+            }
+
+            return null;
+        }
+        public MappedMemoryRegion FindMappedMemory(ushort position)
+        {
+            for (int i = 0; i < this.MappedMemory.Count; i++)
+            {
+                MappedMemoryRegion mappedIO = this.MappedMemory[i];
+
+                if (mappedIO.Start <= position)
+                {
+                    if (mappedIO.End - 1 >= position)
+                    {
+                        return mappedIO;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public void AddMappedStream(MappedMemoryRegion.Name name, ushort start, ushort length, bool random = false)
+        {
+            FilledMemoryStream stream = new FilledMemoryStream(length, random);
+            AddMappedStream(name, start, length, stream, 0);
+        }
+        public void AddMappedStream(MappedMemoryRegion.Name name, ushort start, Stream externalStream)
+        {
+            this.AddMappedStream(name, start, (ushort)externalStream.Length, externalStream, 0);
+        }
+        public void AddMappedStream(MappedMemoryRegion.Name name, ushort start, ushort length, Stream externalStream, long externalBaseAddress)
+        {
+            MappedMemoryRegion mappedIO = FindMappedMemory(start);
+
+            if (mappedIO != null)
+            {
+                throw new Exception(string.Format("mappedIO already existing: start:{0}, end:{1}", start, (start + length)));
+            }
+            else
+            {
+                if (this.MappedMemory.Find(map => map.RegionName == name) != null)
+                {
+                    throw new Exception("Name already exists: " + name);
+                }
+
+                ExternalMemory stream = new ExternalMemory(externalStream, externalBaseAddress, length, writable: externalStream.CanWrite);
+                mappedIO = new MappedMemoryRegion(name, start, length, stream);
+
+                this.MappedMemory.Add(mappedIO);
+            }
+        }
+
+        public void RemoveMappedStream(MappedMemoryRegion.Name name)
+        {
+            MappedMemoryRegion mappedMemory = FindMappedMemory(name);
+            RemoveMappedStream(mappedMemory);
+        }
+        public void RemoveMappedStream(MappedMemoryRegion mappedMemory)
+        {
+            this.MappedMemory.Remove(mappedMemory);
+            mappedMemory.Close();
         }
 
         public void DumpMMU()

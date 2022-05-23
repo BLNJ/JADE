@@ -15,19 +15,19 @@ using JADE.Core.Bridge.ReadOnlyMemory;
 
 namespace JADE.Core
 {
-    public class Device : DeviceBase, INotifyPropertyChanged
+    public class Device : INotifyPropertyChanged
     {
         CentralProcessingUnit.CPU cpu;
-        public override CPUBase CPU => this.cpu;
+        public override CPUBase<Registers.CPURegisters> CPU => this.cpu;
 
         PictureProcessingUnit.PPU ppu;
-        public override PPUBase PPU => this.ppu;
+        public override PictureProcessingUnit.PPU PPU => this.ppu;
 
         MemoryManagementUnit.MMU mmu;
         public override MMUBase MMU => this.mmu;
 
         ReadOnlyMemory.ROM rom;
-        public override ROMBase ROM => this.rom;
+        public override ReadOnlyMemory.ROM ROM => this.rom;
 
         public IO.TriggerStream MappedIO
         {

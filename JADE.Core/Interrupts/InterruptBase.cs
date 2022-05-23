@@ -10,6 +10,14 @@ namespace JADE.Core.Interrupts
 {
     public class InterruptBase : INotifyPropertyChanged
     {
+        MemoryManagementUnit.MMU mmu;
+
+        public ushort BaseAddress
+        {
+            get;
+            private set;
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -18,6 +26,23 @@ namespace JADE.Core.Interrupts
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        public InterruptBase(MemoryManagementUnit.MMU mmu, ushort baseAddress)
+        {
+            this.mmu = mmu;
+            this.BaseAddress = baseAddress;
+        }
+
+        public byte ReadByte(ushort address)
+        {
+            byte flags = mmu.Stream.ReadByte(BaseAddress + address);
+            return flags;
+        }
+
+        public void WriteByte(ushort address, byte value)
+        {
+            mmu.Stream.WriteByte(BaseAddress + address, value);
         }
     }
 }

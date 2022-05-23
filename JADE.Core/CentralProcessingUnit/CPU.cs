@@ -4,19 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using JADE.Core.Bridge.CentralProcessingUnit;
-using JADE.Core.Bridge.MemoryManagementUnit;
-using JADE.Core.Bridge.Register;
 using JADE.Core.Registers;
 
 namespace JADE.Core.CentralProcessingUnit
 {
-    public class CPU : CPUBase<Registers.CPURegisters>
+    public class CPU
     {
-        CPURegisters registers;
-        public override CPURegisters Registers
+        Device device;
+
+        public CPURegisters Registers
         {
-            get => this.registers;
+            get;
+            private set;
         }
 
         public Stack Stack
@@ -28,6 +27,13 @@ namespace JADE.Core.CentralProcessingUnit
         {
             get;
             private set;
+        }
+        public MemoryManagementUnit.MMU MMU
+        {
+            get
+            {
+                return this.device.MMU;
+            }
         }
 
         private bool interruptMasterEnable = false;
@@ -58,9 +64,10 @@ namespace JADE.Core.CentralProcessingUnit
         internal bool disableInterruptsPending;
         internal bool enableInterruptsPending;
 
-        public CPU(Device device) : base(device)
+        public CPU(Device device)
         {
-            this.registers = new Registers.CPURegisters(this.MMU);
+            this.device = device;
+            this.Registers = new Registers.CPURegisters(this.MMU);
 
             this.Stack = new Stack(this);
             this.ProgramCounter = new ProgramCounter(this);
@@ -69,7 +76,7 @@ namespace JADE.Core.CentralProcessingUnit
             this.InterruptEnabled = new Interrupts.CPUInterrupts(this.MMU, 0xFFFF);
         }
 
-        public override void Reset()
+        public void Reset()
         {
             this.Registers.Reset();
             this.enableInterruptsPending = false;
@@ -77,15 +84,15 @@ namespace JADE.Core.CentralProcessingUnit
 
             this.RAM = new IO.FilledMemoryStream(0x2000, random: true);
             // Working RAM
-            this.MMU.AddMappedStream(MappedMemoryRegion.Name.RAM, 0xC000, 0x2000, this.RAM, 0);
+            this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.RAM, 0xC000, 0x2000, this.RAM, 0);
             // Shadow RAM
-            this.MMU.AddMappedStream(MappedMemoryRegion.Name.ShadowRAM, 0xE000, 0x1E00, this.RAM, 0);
+            this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.ShadowRAM, 0xE000, 0x1E00, this.RAM, 0);
         }
 
         //TODO this is for debugging reasons until the new system is in place
         ushort previousPC = 0x0;
         Instructions.IInstruction previousInstruction;
-        public override void Step()
+        public void Step()
         {
             if (this.InterruptMasterEnable) //TODO checks missing?
             {

@@ -199,7 +199,7 @@ namespace JADE.Core.Registers
 
         }
 
-        public override void Reset()
+        public void Reset()
         {
             this.lcd_control = 0x91;
         }

@@ -5,14 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.IO;
-using JADE.Core.Bridge.PictureProcessingUnit;
 
 namespace JADE.Core.PictureProcessingUnit
 {
-    public class PPU : PPUBase
+    public class PPU
     {
         public const byte LCDHeight = 144;
         public const byte LCDWidth = 160;
+
+        internal Device device;
 
         Bitmap backgroundBuffer;
         Bitmap outputBuffer;
@@ -43,7 +44,7 @@ namespace JADE.Core.PictureProcessingUnit
         {
             get
             {
-                byte value = base.device.MMU.Stream.ReadByte(0xFF46);
+                byte value = this.device.MMU.Stream.ReadByte(0xFF46);
                 ushort address = (ushort)(value * 0x100);
 
                 return address;
@@ -51,7 +52,7 @@ namespace JADE.Core.PictureProcessingUnit
             set
             {
                 byte address = (byte)(value / 0x100);
-                base.device.MMU.Stream.WriteByte(0xFF46, address);
+                this.device.MMU.Stream.WriteByte(0xFF46, address);
             }
         }
         /// <summary>
@@ -61,12 +62,12 @@ namespace JADE.Core.PictureProcessingUnit
         {
             get
             {
-                byte value = base.device.MMU.Stream.ReadByte(0xFF44);
+                byte value = this.device.MMU.Stream.ReadByte(0xFF44);
                 return value;
             }
             set
             {
-                base.device.MMU.Stream.WriteByte(0xFF44, value);
+                this.device.MMU.Stream.WriteByte(0xFF44, value);
             }
         }
         /// <summary>
@@ -76,12 +77,12 @@ namespace JADE.Core.PictureProcessingUnit
         {
             get
             {
-                byte value = base.device.MMU.Stream.ReadByte(0xFF45);
+                byte value = this.device.MMU.Stream.ReadByte(0xFF45);
                 return value;
             }
             set
             {
-                base.device.MMU.Stream.WriteByte(0xFF45, value);
+                this.device.MMU.Stream.WriteByte(0xFF45, value);
             }
         }
 
@@ -94,8 +95,9 @@ namespace JADE.Core.PictureProcessingUnit
         internal MemoryStream VRAM;
         internal MemoryStream OAM;
 
-        public PPU(Device device) : base(device)
+        public PPU(Device device)
         {
+            this.device = device;
             this.LCDControlRegisters = new Registers.LCDControlRegisters(this.device.MMU);
             this.LCDStatusRegisters = new Registers.LCDStatusRegisters(this.device.MMU);
             this.LCDPosition = new Registers.LCDPositionScrolling(this.device.MMU);
@@ -105,18 +107,18 @@ namespace JADE.Core.PictureProcessingUnit
             this.ObjectPaletteData1 = new ColorPalette(this, 0xFF49);
         }
 
-        public override void Reset()
+        public void Reset()
         {
             backgroundBuffer = new Bitmap(256, 256);
             outputBuffer = new Bitmap(LCDWidth, LCDHeight);
 
             //VRAM
             this.VRAM = new IO.FilledMemoryStream(0x2000, random: false); //TODO for dev purposes random is set to OFF (the bootstrap takes too long for the loop)
-            base.device.MMU.AddMappedStream(MemoryManagementUnit.MappedMemory.Name.VRAM, 0x8000, this.VRAM);
+            this.device.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.VRAM, 0x8000, this.VRAM);
 
             //OAM
             this.OAM = new IO.FilledMemoryStream(0xA0, random: false);
-            this.device.MMU.AddMappedStream(MemoryManagementUnit.MappedMemory.Name.OAM, 0xFE00, this.OAM);
+            this.device.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.OAM, 0xFE00, this.OAM);
 
             this.LCDControlRegisters.Reset();
             this.LCDStatusRegisters.Reset();
@@ -124,7 +126,7 @@ namespace JADE.Core.PictureProcessingUnit
             this.CurrentScanline = 0;
         }
 
-        public override void Step()
+        public void Step()
         {
             //var range = this.LCDControlRegisters.BGTileMapDisplaySelect;
             //for (int y = 0; y < bitmap.Height; y++)

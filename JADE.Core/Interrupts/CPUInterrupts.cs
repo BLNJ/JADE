@@ -1,5 +1,4 @@
-﻿using JADE.Core.Bridge.Interrupts;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JADE.Core.Interrupts
 {
-    public class CPUInterrupts : MemoryInterruptBase
+    public class CPUInterrupts : InterruptBase
     {
         byte interruptFlag
         {
@@ -81,7 +80,7 @@ namespace JADE.Core.Interrupts
             }
         }
 
-        public CPUInterrupts(Bridge.MemoryManagementUnit.MMUBase mmu, ushort baseAddress) : base(mmu, baseAddress)
+        public CPUInterrupts(MemoryManagementUnit.MMU mmu, ushort baseAddress) : base(mmu, baseAddress)
         {
         }
     }

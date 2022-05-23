@@ -6,29 +6,44 @@ using System.IO;
 
 namespace JADE.Core.ReadOnlyMemory
 {
-    public class ROM : Bridge.ReadOnlyMemory.ROMBase
+    public class ROM
     {
+        Device device;
         public ROMHeader Header;
 
-        public ROM(Device device) : base(device)
+        public Stream Stream
         {
-
+            get;
+            private set;
         }
 
-        public override void Read()
+        public ROM(Device device)
+        {
+            this.device = device;
+        }
+
+        public void Read()
         {
             this.Header = new ROMHeader(this);
             Header.Read();
         }
 
-        public override void Reset()
+        public void OpenFile(string filePath)
         {
-            throw new NotImplementedException();
+            if (!File.Exists(filePath))
+            {
+                throw new FileNotFoundException("File not found", filePath);
+            }
+            else
+            {
+                FileStream fs = File.OpenRead(filePath);
+                this.Open(fs);
+            }
         }
 
-        public override void Step()
+        public void Open(Stream stream)
         {
-            throw new NotImplementedException();
+            this.Stream = stream;
         }
 
         public class ROMHeader

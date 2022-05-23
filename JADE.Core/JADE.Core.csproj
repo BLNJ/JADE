@@ -17,6 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\JADE.Core.Instructions.Bridge\JADE.Core.Instructions.Bridge.csproj" />
+    <ProjectReference Include="..\JADE.Core.Instructions.Interpreter\JADE.Core.Instructions.Interpreter.csproj" />
+    <ProjectReference Include="..\JADE.Helpers\JADE.Helpers.csproj" />
     <ProjectReference Include="..\JADE.IO\JADE.IO.csproj" />
   </ItemGroup>
 
