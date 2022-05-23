@@ -11,7 +11,7 @@ namespace JADE.Core.Instructions.Interpreter.Load
     public static class Load_8_LDH
     {
         [Instruction(0xE0, "LDH (FF00 + n), A")]
-        [Instruction(0xE0, "LDH A, (FF00 + n)")]
+        [Instruction(0xF0, "LDH A, (FF00 + n)")]
         public class nn_relative : IInstruction
         {
             byte? value = null;
