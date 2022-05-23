@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JADE.Core.Instructions.Interpreter
+namespace JADE.Core.Instructions.Interpreter.Misc
 {
     [Instruction(0x00, "NOP")]
     public class NOP : IInstruction

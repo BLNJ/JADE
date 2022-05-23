@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JADE.Core.Instructions.Interpreter.Misc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,7 @@ namespace JADE.Core.Instructions.Interpreter.UnitTest
             Type instructionInterfaceType = typeof(JADE.Core.Instructions.Bridge.IInstruction);
             Type instructionAttributeType = typeof(JADE.Core.Instructions.Bridge.InstructionAttribute);
 
-            Type bla = typeof(JADE.Core.Instructions.Interpreter.BIT_8_BIT); //if I dont do that we cant "see" the Assembly
+            Type bla = typeof(BIT_8_BIT); //if I dont do that we cant "see" the Assembly
 
             AppDomain currentAppDomain = AppDomain.CurrentDomain;
             System.Reflection.Assembly[] assemblies = currentAppDomain.GetAssemblies();

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JADE.Core.Instructions.Interpreter
+namespace JADE.Core.Instructions.Interpreter.Misc
 {
     public static class Shift_8
     {

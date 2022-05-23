@@ -6,10 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JADE.Core.Instructions.Interpreter
+namespace JADE.Core.Instructions.Interpreter.Misc
 {
-    [Instruction(0x76, "HALT")]
-    public class HALT : IInstruction
+    [Instruction(0xF3, "DI")]
+    public class DI : IInstruction
     {
         public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
         {
@@ -24,8 +24,8 @@ namespace JADE.Core.Instructions.Interpreter
         }
     }
 
-    [Instruction(0x10, "STOP")]
-    public class STOP : IInstruction
+    [Instruction(0xFB, "EI")]
+    public class EI : IInstruction
     {
         public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
         {

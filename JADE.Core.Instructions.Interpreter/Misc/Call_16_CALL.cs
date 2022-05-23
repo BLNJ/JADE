@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JADE.Core.Instructions.Interpreter
+namespace JADE.Core.Instructions.Interpreter.Misc
 {
     public static class Call_16_CALL
     {
@@ -21,7 +21,7 @@ namespace JADE.Core.Instructions.Interpreter
             {
                 parametersList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedShort);
 
-                if(opCode != 0xCD)
+                if (opCode != 0xCD)
                 {
                     switch (opCode)
                     {
@@ -47,7 +47,7 @@ namespace JADE.Core.Instructions.Interpreter
                 ushort value = (ushort)parametersList[0].Value;
                 bool doCall = true;
 
-                if(opCode != 0xCD)
+                if (opCode != 0xCD)
                 {
                     bool flag = (bool)parametersList[1].Value;
 
@@ -73,7 +73,7 @@ namespace JADE.Core.Instructions.Interpreter
                     }
                 }
 
-                if(doCall)
+                if (doCall)
                 {
                     InstructionMethods.Call(value);
                 }

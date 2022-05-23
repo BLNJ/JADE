@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JADE.Core.Instructions.Interpreter
+namespace JADE.Core.Instructions.Interpreter.Misc
 {
     public static class RET_Return
     {
@@ -21,7 +21,7 @@ namespace JADE.Core.Instructions.Interpreter
             {
                 ParameterFlag? flag = null;
 
-                switch(opCode)
+                switch (opCode)
                 {
                     case 0xC0:
                     case 0xC8:
@@ -34,7 +34,7 @@ namespace JADE.Core.Instructions.Interpreter
                         break;
                 }
 
-                if(opCode != 0xC9)
+                if (opCode != 0xC9)
                 {
                     parametersList.AddRegisterFlag(flag.Value);
                 }
@@ -46,13 +46,13 @@ namespace JADE.Core.Instructions.Interpreter
             {
                 bool process = true;
 
-                if(opCode != 0xC9)
+                if (opCode != 0xC9)
                 {
                     bool flag = (bool)parametersList[0].Value;
 
-                    if(opCode == 0xC0 || opCode == 0xD0)
+                    if (opCode == 0xC0 || opCode == 0xD0)
                     {
-                        if(!flag)
+                        if (!flag)
                         {
                             process = true;
                         }
@@ -63,7 +63,7 @@ namespace JADE.Core.Instructions.Interpreter
                     }
                     else
                     {
-                        if(flag)
+                        if (flag)
                         {
                             process = true;
                         }

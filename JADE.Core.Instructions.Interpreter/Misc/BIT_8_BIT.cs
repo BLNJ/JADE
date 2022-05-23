@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JADE.Core.Instructions.Interpreter
+namespace JADE.Core.Instructions.Interpreter.Misc
 {
     public static class BIT_8_BIT
     {
@@ -87,7 +87,7 @@ namespace JADE.Core.Instructions.Interpreter
             public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
             {
                 ParameterRegister register = Helpers.BitHelper.OpCodeLowerNibbleToRegister(opCode);
-                if(register == ParameterRegister.HL)
+                if (register == ParameterRegister.HL)
                 {
                     parametersList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.HL);
                 }
@@ -110,7 +110,7 @@ namespace JADE.Core.Instructions.Interpreter
                 InstructionMethods.Bit(registerCommit, bitPosition, value);
 
                 changesList.AddRegisterCommit(registerCommit);
-                if(register != ParameterRegister.HL)
+                if (register != ParameterRegister.HL)
                 {
                     changesList.AddRegister(register, value);
                     return 8;

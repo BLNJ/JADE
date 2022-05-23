@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JADE.Core.Instructions.Interpreter
+namespace JADE.Core.Instructions.Interpreter.Misc
 {
     public static class Rotate_8
     {
@@ -132,8 +132,8 @@ namespace JADE.Core.Instructions.Interpreter
             public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
             {
                 parametersList.AddRegister(ParameterRegister.A);
-                
-                if(opCode == 0x17)
+
+                if (opCode == 0x17)
                 {
                     parametersList.AddRegisterFlag(ParameterFlag.Flag_Carry);
                 }
@@ -151,9 +151,9 @@ namespace JADE.Core.Instructions.Interpreter
                 byte rotatedValue;
                 RegisterCommit commit = new RegisterCommit();
 
-                if(opCodeHighNibble == 0)
+                if (opCodeHighNibble == 0)
                 {
-                    if(opCodeLowNibble == 0x07)
+                    if (opCodeLowNibble == 0x07)
                     {
                         rotatedValue = InstructionMethods.RotateLeftCarry(commit, value);
                     }

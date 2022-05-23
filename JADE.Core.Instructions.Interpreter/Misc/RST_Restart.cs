@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JADE.Core.Instructions.Interpreter
+namespace JADE.Core.Instructions.Interpreter.Misc
 {
     public static class RST_Restart
     {
@@ -35,7 +35,7 @@ namespace JADE.Core.Instructions.Interpreter
 
             private byte opCodeToLocation(byte opCode)
             {
-                switch(opCode)
+                switch (opCode)
                 {
                     case 0xC7:
                         return 0x0;
@@ -53,7 +53,7 @@ namespace JADE.Core.Instructions.Interpreter
                         return 0x30;
                     case 0xFF:
                         return 0x38;
-                        
+
 
                     default:
                         throw new NotImplementedException("Unknown opCode to jump to: " + opCode.ToString("X2"));
