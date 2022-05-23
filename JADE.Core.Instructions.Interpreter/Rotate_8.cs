@@ -121,5 +121,66 @@ namespace JADE.Core.Instructions.Interpreter
                 }
             }
         }
+
+        [Instruction(0x07, "RLCA")]
+        [Instruction(0x17, "RLA")]
+
+        [Instruction(0x0F, "RRCA")]
+        [Instruction(0x1F, "RRA")]
+        public class rotateIntoA : IInstruction
+        {
+            public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
+            {
+                parametersList.AddRegister(ParameterRegister.A);
+                
+                if(opCode == 0x17)
+                {
+                    parametersList.AddRegisterFlag(ParameterFlag.Flag_Carry);
+                }
+
+                return true;
+            }
+
+            public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
+            {
+                byte opCodeHighNibble = opCode.GetUpper();
+                byte opCodeLowNibble = opCode.GetLower();
+
+                byte value = (byte)parametersList[0].Value;
+
+                byte rotatedValue;
+                RegisterCommit commit = new RegisterCommit();
+
+                if(opCodeHighNibble == 0)
+                {
+                    if(opCodeLowNibble == 0x07)
+                    {
+                        rotatedValue = InstructionMethods.RotateLeftCarry(commit, value);
+                    }
+                    else
+                    {
+                        rotatedValue = InstructionMethods.RotateRightCarry(commit, value);
+                    }
+                }
+                else
+                {
+                    bool flagCarry = (bool)parametersList[1].Value;
+                    if (opCodeLowNibble == 0x07)
+                    {
+                        rotatedValue = InstructionMethods.RotateLeft(commit, flagCarry, value);
+                    }
+                    else
+                    {
+                        rotatedValue = InstructionMethods.RotateRight(commit, flagCarry, value);
+                    }
+                }
+
+                changesList.AddRegister(ParameterRegister.A, rotatedValue);
+                changesList.AddRegisterCommit(commit);
+                changesList.AddRegisterFlag(ParameterFlag.Flag_Zero, false);
+
+                return 4;
+            }
+        }
     }
 }
