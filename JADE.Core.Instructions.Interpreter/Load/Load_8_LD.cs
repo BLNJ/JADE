@@ -131,7 +131,7 @@ namespace JADE.Core.Instructions.Interpreter.Load
 
         [Instruction(0x02, "LD (BC), A")]
         [Instruction(0x12, "LD (DE), A")]
-        public class nn_relative : IInstruction
+        public class rr_A : IInstruction
         {
             public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
             {
@@ -154,6 +154,126 @@ namespace JADE.Core.Instructions.Interpreter.Load
                 }
 
                 changesList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, destinationRegister, registerA);
+                return 8;
+            }
+        }
+
+        [Instruction(0x06, "LD B, n")]
+        [Instruction(0x16, "LD D, n")]
+        [Instruction(0x26, "LD H, n")]
+        [Instruction(0x36, "LD (HL), n")]
+        public class r_n : IInstruction
+        {
+            public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
+            {
+                parametersList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedByte);
+
+                return true;
+            }
+
+            public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
+            {
+                byte value = (byte)parametersList[0].Value;
+
+                if(opCode == 0x36)
+                {
+                    changesList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.HL, value);
+                    return 12;
+                }
+                else
+                {
+                    ParameterRegister destinationRegister;
+
+                    switch(opCode)
+                    {
+                        case 0x06:
+                            destinationRegister = ParameterRegister.B;
+                            break;
+                        case 0x16:
+                            destinationRegister = ParameterRegister.D;
+                            break;
+                        case 0x26:
+                            destinationRegister = ParameterRegister.H;
+                            break;
+
+                        default:
+                            throw new NotImplementedException();
+                    }
+
+                    changesList.AddRegister(destinationRegister, value);
+
+                    return 8;
+                }
+            }
+        }
+
+        [Instruction(0x0A, "LD A, (BC)")]
+        [Instruction(0x1A, "LD A, (DE)")]
+        public class A_rr : IInstruction
+        {
+            public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
+            {
+                if(opCode == 0x0A)
+                {
+                    parametersList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.BC);
+                }
+                else
+                {
+                    parametersList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.DE);
+                }
+
+                return true;
+            }
+
+            public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
+            {
+                byte value = (byte)parametersList[0].Value;
+
+                changesList.AddRegister(ParameterRegister.A, value);
+
+                return 8;
+            }
+        }
+
+        [Instruction(0x0E, "LD C, n")]
+        [Instruction(0x1E, "LD E, n")]
+        [Instruction(0x2E, "LD L, n")]
+        [Instruction(0x3E, "LD A, n")]
+        public class R_n : IInstruction
+        {
+            public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
+            {
+                parametersList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedByte);
+
+                return true;
+            }
+
+            public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
+            {
+                byte value = (byte)parametersList[0].Value;
+
+                ParameterRegister destinationRegister;
+                switch (opCode)
+                {
+                    case 0x0E:
+                        destinationRegister = ParameterRegister.C;
+                        break;
+                    case 0x1E:
+                        destinationRegister = ParameterRegister.E;
+                        break;
+                    case 0x2E:
+                        destinationRegister = ParameterRegister.L;
+                        break;
+                    case 0x3E:
+                        destinationRegister = ParameterRegister.A;
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
+                }
+
+                changesList.AddRegister(destinationRegister, value);
+
                 return 8;
             }
         }
