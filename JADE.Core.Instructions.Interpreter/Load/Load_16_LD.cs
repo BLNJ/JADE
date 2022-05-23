@@ -142,5 +142,57 @@ namespace JADE.Core.Instructions.Interpreter.Load
                 return 20;
             }
         }
+
+        [Instruction(0xEA, "LD (nn), A")]
+        [Instruction(0xFA, "LD A, (nn)")]
+        public class a_nn : IInstruction
+        {
+            ushort? address = null;
+
+            public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
+            {
+                if (address == null)
+                {
+                    parametersList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedShort);
+                    return false;
+                }
+                else
+                {
+                    if(opCode == 0xFA)
+                    {
+                        parametersList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, this.address.Value);
+                    }
+                    else
+                    {
+                        parametersList.AddRegister(ParameterRegister.A);
+                    }
+
+                    return true;
+                }
+            }
+
+            public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
+            {
+                if(address == null)
+                {
+                    this.address = (ushort)parametersList[0].Value;
+                }
+                else
+                {
+                    if(opCode == 0xEA)
+                    {
+                        byte registerA = (byte)parametersList[1].Value;
+                        changesList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, this.address.Value, registerA);
+                    }
+                    else
+                    {
+                        byte value = (byte)parametersList[1].Value;
+                        changesList.AddRegister(ParameterRegister.A, value);
+                    }
+                }
+
+                return 16;
+            }
+        }
     }
 }
