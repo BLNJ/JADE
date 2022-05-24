@@ -25,7 +25,7 @@ namespace JADE.Core.CentralProcessingUnit
             Type instructionInterfaceType = typeof(JADE.Core.Instructions.Bridge.IInstruction);
             Type instructionAttributeType = typeof(JADE.Core.Instructions.Bridge.InstructionAttribute);
 
-            Type bla = typeof(JADE.Core.Instructions.Interpreter.Load.Load_8_LD);
+            Type bla = typeof(JADE.Core.Instructions.Interpreter.Load.Load_8_LD); //for some fucking reason I cant see the Assembly, if I dont access it in any way... .NET Core is strange dude
 
             AppDomain currentAppDomain = AppDomain.CurrentDomain;
             System.Reflection.Assembly[] assemblies = currentAppDomain.GetAssemblies();
