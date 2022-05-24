@@ -10,6 +10,23 @@ namespace JADE.Core.Instructions.Bridge
 {
     public static class ExtensionsResponse
     {
+        public static void AddRegister(this List<InstructionParameterResponseBase> changesList, ParameterRegister register, object value)
+        {
+            Type valueType = value.GetType();
+            if(valueType == typeof(byte))
+            {
+                AddRegister(changesList, register, (byte)value);
+            }
+            else if(valueType == typeof(ushort))
+            {
+                AddRegister(changesList, register, (ushort)value);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public static void AddRegister(this List<InstructionParameterResponseBase> changesList, ParameterRegister register, byte value)
         {
             switch(register)
@@ -49,6 +66,23 @@ namespace JADE.Core.Instructions.Bridge
             changesList.Add(new RegisterInstructionParameterCommitResponse(registerCommit));
         }
 
+        public static void AddRegisterFlag(this List<InstructionParameterResponseBase> changesList, ParameterFlag flag, object value)
+        {
+            Type valueType = value.GetType();
+            if (valueType == typeof(bool))
+            {
+                AddRegisterFlag(changesList, flag, (bool)value);
+            }
+            else if (valueType == typeof(int))
+            {
+                AddRegisterFlag(changesList, flag, (int)value);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public static void AddRegisterFlag(this List<InstructionParameterResponseBase> changesList, ParameterFlag flag, bool value)
         {
             if(flag == ParameterFlag.Flag_Carry_int)
@@ -79,9 +113,39 @@ namespace JADE.Core.Instructions.Bridge
             changesList.Add(new RelativeMemoryInstructionParameterResponse(requestType, baseAddressRegister, address, value));
         }
 
+        public static void AddMemory(this List<InstructionParameterResponseBase> changesList, ParameterRequestType requestType, object value)
+        {
+            changesList.Add(new MemoryInstructionParameterResponse(requestType, value));
+        }
+
         public static void AddMemory(this List<InstructionParameterResponseBase> changesList, ParameterRequestType requestType, long address, object value)
         {
             changesList.Add(new MemoryInstructionParameterResponse(requestType, address, value));
+        }
+
+        public static void AddStackPop(this List<InstructionParameterResponseBase> changesList, object value)
+        {
+            Type valueType = value.GetType();
+            if (valueType == typeof(byte))
+            {
+                AddStackPop(changesList, (byte)value);
+            }
+            else if (valueType == typeof(ushort))
+            {
+                AddStackPop(changesList, (ushort)value);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public static void AddStackPop(this List<InstructionParameterResponseBase> changesList, ushort value)
+        {
+            changesList.Add(new Stack.StackInstructionParameterResponse(Bridge.Stack.ParameterType.POP, Bridge.Stack.ParameterValueType.UnsignedShort, value));
+        }
+        public static void AddStackPop(this List<InstructionParameterResponseBase> changesList, byte value)
+        {
+            changesList.Add(new Stack.StackInstructionParameterResponse(Bridge.Stack.ParameterType.POP, Bridge.Stack.ParameterValueType.UnsignedByte, value));
         }
 
         public static void AddStackPush(this List<InstructionParameterResponseBase> changesList, ushort value)
