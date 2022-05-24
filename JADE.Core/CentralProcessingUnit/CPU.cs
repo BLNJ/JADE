@@ -5,12 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using JADE.Core.Registers;
+using JADE.Core.Instructions.Bridge;
 
 namespace JADE.Core.CentralProcessingUnit
 {
     public class CPU
     {
         Device device;
+        InstructionManager instructionManager;
 
         public CPURegisters Registers
         {
@@ -74,6 +76,8 @@ namespace JADE.Core.CentralProcessingUnit
 
             this.InterruptFlags = new Interrupts.CPUInterrupts(this.MMU, 0xFF0F);
             this.InterruptEnabled = new Interrupts.CPUInterrupts(this.MMU, 0xFFFF);
+
+            this.instructionManager = new InstructionManager(this);
         }
 
         public void Reset()
@@ -87,11 +91,10 @@ namespace JADE.Core.CentralProcessingUnit
             this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.RAM, 0xC000, 0x2000, this.RAM, 0);
             // Shadow RAM
             this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.ShadowRAM, 0xE000, 0x1E00, this.RAM, 0);
+
+            this.instructionManager.Initialize();
         }
 
-        //TODO this is for debugging reasons until the new system is in place
-        ushort previousPC = 0x0;
-        Instructions.IInstruction previousInstruction;
         public void Step()
         {
             if (this.InterruptMasterEnable) //TODO checks missing?
@@ -101,23 +104,23 @@ namespace JADE.Core.CentralProcessingUnit
 
                 if (this.InterruptEnabled.VBlank)
                 {
-                    Instructions.InstructionHelper.Call(0x40);
+                    JADE.Core.Instructions.Bridge.InstructionMethods.Call(0x40);
                 }
                 else if (this.InterruptEnabled.LCD_STAT)
                 {
-                    Instructions.InstructionHelper.Call(0x48);
+                    JADE.Core.Instructions.Bridge.InstructionMethods.Call(0x48);
                 }
                 else if (this.InterruptEnabled.Timer)
                 {
-                    Instructions.InstructionHelper.Call(0x50);
+                    JADE.Core.Instructions.Bridge.InstructionMethods.Call(0x50);
                 }
                 else if (this.InterruptEnabled.Serial)
                 {
-                    Instructions.InstructionHelper.Call(0x58);
+                    JADE.Core.Instructions.Bridge.InstructionMethods.Call(0x58);
                 }
                 else if (this.InterruptEnabled.Joypad)
                 {
-                    Instructions.InstructionHelper.Call(0x60);
+                    JADE.Core.Instructions.Bridge.InstructionMethods.Call(0x60);
                 }
 
                 this.InterruptMasterEnable = false;
@@ -143,44 +146,46 @@ namespace JADE.Core.CentralProcessingUnit
 
                 this.device.Status += string.Format(" {0}", op);
             }
-            
-            Core.Instructions.IInstruction instruction = this.device.pluginHost.findInstruction(op, isExtended);
-            if (instruction == null)
-            {
-                throw new NotImplementedException();
-            }
-            else
-            {
-                byte cycles = instruction.getCycles();
 
-                string mnemoric = instruction.getMnemoric();
-                this.device.Status = string.Format("[CPU] DECODE: {0}", mnemoric);
+            //Core.Instructions.IInstruction instruction = this.device.pluginHost.findInstruction(op, isExtended);
+            //if (instruction == null)
+            //{
+            //    throw new NotImplementedException();
+            //}
+            //else
+            //{
+            //    byte cycles = instruction.getCycles();
 
-                this.device.Status = "[CPU] EXECUTE";
-                instruction.Process(this);
+            //    string mnemoric = instruction.getMnemoric();
+            //    this.device.Status = string.Format("[CPU] DECODE: {0}", mnemoric);
 
-                //TODO find a cleaner way
-                // 0xF3 = DI
-                // 0xFB = EI
-                if (op != 0xF3 || op != 0xFB)
-                {
-                    if (enableInterruptsPending)
-                    {
-                        this.InterruptMasterEnable = true;
-                        enableInterruptsPending = false;
-                    }
-                    if (disableInterruptsPending)
-                    {
-                        this.InterruptMasterEnable = false;
-                        disableInterruptsPending = false;
-                    }
-                }
+            //    this.device.Status = "[CPU] EXECUTE";
+            //    instruction.Process(this);
 
-                this.previousPC = this.Registers.PC;
-                this.previousInstruction = instruction;
+            //    //TODO find a cleaner way
+            //    // 0xF3 = DI
+            //    // 0xFB = EI
+            //    if (op != 0xF3 || op != 0xFB)
+            //    {
+            //        if (enableInterruptsPending)
+            //        {
+            //            this.InterruptMasterEnable = true;
+            //            enableInterruptsPending = false;
+            //        }
+            //        if (disableInterruptsPending)
+            //        {
+            //            this.InterruptMasterEnable = false;
+            //            disableInterruptsPending = false;
+            //        }
+            //    }
 
-                return cycles;
-            }
+            //    this.previousPC = this.Registers.PC;
+            //    this.previousInstruction = instruction;
+
+            //    return cycles;
+            //}
+
+            byte cycles = this.instructionManager.CycleInstruction(op, isExtended);
         }
 
     }
