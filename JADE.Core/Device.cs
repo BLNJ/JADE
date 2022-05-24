@@ -7,27 +7,34 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using JADE.IO;
-using JADE.Core.Bridge;
-using JADE.Core.Bridge.CentralProcessingUnit;
-using JADE.Core.Bridge.PictureProcessingUnit;
-using JADE.Core.Bridge.MemoryManagementUnit;
-using JADE.Core.Bridge.ReadOnlyMemory;
 
 namespace JADE.Core
 {
     public class Device : INotifyPropertyChanged
     {
-        CentralProcessingUnit.CPU cpu;
-        public override CPUBase<Registers.CPURegisters> CPU => this.cpu;
+        public CentralProcessingUnit.CPU CPU
+        {
+            get;
+            private set;
+        }
 
-        PictureProcessingUnit.PPU ppu;
-        public override PictureProcessingUnit.PPU PPU => this.ppu;
+        public PictureProcessingUnit.PPU PPU
+        {
+            get;
+            private set;
+        }
 
-        MemoryManagementUnit.MMU mmu;
-        public override MMUBase MMU => this.mmu;
+        public MemoryManagementUnit.MMU MMU
+        {
+            get;
+            private set;
+        }
 
-        ReadOnlyMemory.ROM rom;
-        public override ReadOnlyMemory.ROM ROM => this.rom;
+        public ReadOnlyMemory.ROM ROM
+        {
+            get;
+            private set;
+        }
 
         public IO.TriggerStream MappedIO
         {
@@ -52,16 +59,16 @@ namespace JADE.Core
 
         public Device()
         {
-            this.mmu = new MemoryManagementUnit.MMU(this);
-            this.cpu = new CentralProcessingUnit.CPU(this);
-            this.ppu = new PictureProcessingUnit.PPU(this);
+            this.MMU = new MemoryManagementUnit.MMU(this);
+            this.CPU = new CentralProcessingUnit.CPU(this);
+            this.PPU = new PictureProcessingUnit.PPU(this);
 
             Reset();
 
             this.Status = "Nothing";
         }
 
-        public override void Start()
+        public void Start()
         {
             this.Status = "Running";
 
@@ -80,16 +87,16 @@ namespace JADE.Core
             gpuThread.Start();
         }
 
-        public override void Pause()
+        public void Pause()
         {
             throw new NotImplementedException();
         }
 
-        public override void Reset()
+        public void Reset()
         {
             this.MMU.Reset();
             this.MappedIO = new TriggerStream(new FilledMemoryStream(0x80, random: false));
-            this.MMU.AddMappedStream(MappedMemoryRegion.Name.IO, 0xFF00, 0x80, this.MappedIO, 0);
+            this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.IO, 0xFF00, 0x80, this.MappedIO, 0);
 
             //TODO 'Subscribe' doesnt know anthing about its range
             //Maybe Add "Subsribe" to MMU and wrap a TriggerStream around the Stream if necessary?
@@ -103,7 +110,7 @@ namespace JADE.Core
         {
             while (true)
             {
-                this.cpu.Step();
+                this.CPU.Step();
                 //this.ppu.Process();
             }
         }
@@ -112,7 +119,7 @@ namespace JADE.Core
         {
             while (true)
             {
-                this.cpu.Step();
+                this.CPU.Step();
             }
         }
 
@@ -120,7 +127,7 @@ namespace JADE.Core
         {
             while (true)
             {
-                this.ppu.Step();
+                this.PPU.Step();
             }
         }
 
@@ -128,32 +135,32 @@ namespace JADE.Core
         {
             Console.WriteLine("Bootrom disabled");
             //Lets unmap the Bootrom, since we need the space for the ROM´s Full Header
-            this.MMU.RemoveMappedStream(MappedMemoryRegion.Name.Bootstrap);
+            this.MMU.RemoveMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.Bootstrap);
 
             //We needed the Header before, but only used a small (0x100 - 0x150) part, so lets unmap the Header...
-            this.MMU.RemoveMappedStream(MappedMemoryRegion.Name.CartridgeHeader);
+            this.MMU.RemoveMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeHeader);
             //...and map it fully
-            this.MMU.AddMappedStream(MappedMemoryRegion.Name.CartridgeHeader, 0x0, 0x150, this.ROM.Stream, 0x0);
+            this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeHeader, 0x0, 0x150, this.ROM.Stream, 0x0);
         }
 
         public void InsertROM(ReadOnlyMemory.ROM rom)
         {
-            if (this.ROM == null && rom.device == null)
+            if (this.ROM == null)// && rom.device == null)
             {
-                this.rom = rom;
+                this.ROM = rom;
 
                 //0100-014F
-                this.mmu.AddMappedStream(MappedMemoryRegion.Name.CartridgeHeader, 0x100, 0x50, this.ROM.Stream, 0x100);
+                this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeHeader, 0x100, 0x50, this.ROM.Stream, 0x100);
                 //0150-3FFF
-                this.mmu.AddMappedStream(MappedMemoryRegion.Name.CartridgeROM_Bank0, 0x0150, 0x3EB0, this.ROM.Stream, 0x0150);
+                this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeROM_Bank0, 0x0150, 0x3EB0, this.ROM.Stream, 0x0150);
 
                 //TODO Debug
                 //4000-7FFF
-                this.mmu.AddMappedStream(MappedMemoryRegion.Name.CartridgeROM_BankX, 0x4000, 0x4000, this.ROM.Stream, 0x4000);
+                this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeROM_BankX, 0x4000, 0x4000, this.ROM.Stream, 0x4000);
 
                 //TODO Debug
                 //A000-BFFF
-                this.mmu.AddMappedStream(MappedMemoryRegion.Name.CartridgeRAM, 0xA000, 0x2000, random: false);
+                this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeRAM, 0xA000, 0x2000, random: false);
             }
             else
             {
