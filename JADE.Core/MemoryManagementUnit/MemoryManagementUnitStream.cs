@@ -242,6 +242,34 @@ namespace JADE.Core.MemoryManagementUnit
             this.Position = offset;
             this.Write(new byte[] { value }, 0, 1);
         }
+        public void Write(object value)
+        {
+            Write(this.Position, value);
+        }
+        public void Write(long offset, object value)
+        {
+            Type valueType = value.GetType();
+            if(valueType == typeof(ushort))
+            {
+                this.WriteUShort(offset, (ushort)value);
+            }
+            else if(valueType == typeof(short))
+            {
+                this.WriteShort(offset, (short)value);
+            }
+            else if(valueType == typeof(byte[]))
+            {
+                this.WriteBytes((byte[])value);
+            }
+            else if(valueType == typeof(byte))
+            {
+                this.WriteByte((byte)value);
+            }
+            else
+            {
+                throw new NotImplementedException("Unimplemented type: " + valueType);
+            }
+        }
         public override void Write(byte[] buffer, int offset, int count)
         {
             if (buffer == null)
