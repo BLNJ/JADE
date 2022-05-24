@@ -68,7 +68,7 @@ namespace JADE.Core.MemoryManagementUnit
             //TODO Move Memory Regions to corresponding devices
 
             //Bootstrap
-            AddMappedStream(MappedMemoryRegion.Name.Bootstrap, 0x0, new MemoryStream(Properties.Resources.bootstrap, false));
+            AddMappedStream(MappedMemoryRegion.Name.Bootstrap, 0x0, new MemoryStream(System.IO.File.ReadAllBytes("C:\\Gameboy_Dev\\totallyLegitBootstrap.bin"), false));
 
             //VRAM
             //AddMappedStream(MemoryManagementUnit.MappedMemory.Name.VRAM, 0x8000, 0x9FFF, random: true);
