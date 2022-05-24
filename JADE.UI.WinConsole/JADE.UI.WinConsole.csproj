@@ -5,4 +5,8 @@
     <TargetFramework>net6.0-windows</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\JADE.Core\JADE.Core.csproj" />
+  </ItemGroup>
+
 </Project>
