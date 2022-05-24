@@ -20,7 +20,13 @@ namespace JADE.Core.Instructions.Bridge.Memory
             private set;
         }
 
-        public MemoryInstructionParameterResponse(ParameterRequestType requestType, long? address, object value) : base(ParameterRequestSource.Memory, value)
+        public MemoryInstructionParameterResponse(ParameterRequestType requestType, object value) : base(ParameterRequestSource.Memory, value)
+        {
+            this.RequestType = requestType;
+            this.Address = null;
+        }
+
+        public MemoryInstructionParameterResponse(ParameterRequestType requestType, long address, object value) : base(ParameterRequestSource.Memory, value)
         {
             this.RequestType = requestType;
             this.Address = address;
