@@ -259,11 +259,11 @@ namespace JADE.Core.MemoryManagementUnit
             }
             else if(valueType == typeof(byte[]))
             {
-                this.WriteBytes((byte[])value);
+                this.WriteBytes(offset, (byte[])value);
             }
             else if(valueType == typeof(byte))
             {
-                this.WriteByte((byte)value);
+                this.WriteByte(offset, (byte)value);
             }
             else
             {
