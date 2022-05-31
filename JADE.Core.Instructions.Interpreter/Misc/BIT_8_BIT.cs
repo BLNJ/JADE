@@ -107,7 +107,7 @@ namespace JADE.Core.Instructions.Interpreter.Misc
                 byte value = (byte)parametersList[0].Value;
 
                 RegisterCommit registerCommit = new RegisterCommit();
-                InstructionMethods.Bit(registerCommit, bitPosition, value);
+                InstructionMethods.Bit(ref registerCommit, bitPosition, value);
 
                 changesList.AddRegisterCommit(registerCommit);
                 if (register != ParameterRegister.HL)

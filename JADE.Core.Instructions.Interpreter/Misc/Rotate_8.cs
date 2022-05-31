@@ -83,21 +83,21 @@ namespace JADE.Core.Instructions.Interpreter.Misc
                     case 0:
                         if (operationLowerNibble > 0x7)
                         {
-                            rotatedValue = InstructionMethods.RotateRightCarry(commit, value);
+                            rotatedValue = InstructionMethods.RotateRightCarry(ref commit, value);
                         }
                         else
                         {
-                            rotatedValue = InstructionMethods.RotateLeftCarry(commit, value);
+                            rotatedValue = InstructionMethods.RotateLeftCarry(ref commit, value);
                         }
                         break;
                     case 1:
                         if (operationLowerNibble > 0x7)
                         {
-                            rotatedValue = InstructionMethods.RotateRight(commit, flagCarry, value);
+                            rotatedValue = InstructionMethods.RotateRight(ref commit, flagCarry, value);
                         }
                         else
                         {
-                            rotatedValue = InstructionMethods.RotateLeft(commit, flagCarry, value);
+                            rotatedValue = InstructionMethods.RotateLeft(ref commit, flagCarry, value);
                         }
                         break;
                 }
@@ -155,11 +155,11 @@ namespace JADE.Core.Instructions.Interpreter.Misc
                 {
                     if (opCodeLowNibble == 0x07)
                     {
-                        rotatedValue = InstructionMethods.RotateLeftCarry(commit, value);
+                        rotatedValue = InstructionMethods.RotateLeftCarry(ref commit, value);
                     }
                     else
                     {
-                        rotatedValue = InstructionMethods.RotateRightCarry(commit, value);
+                        rotatedValue = InstructionMethods.RotateRightCarry(ref commit, value);
                     }
                 }
                 else
@@ -167,11 +167,11 @@ namespace JADE.Core.Instructions.Interpreter.Misc
                     bool flagCarry = (bool)parametersList[1].Value;
                     if (opCodeLowNibble == 0x07)
                     {
-                        rotatedValue = InstructionMethods.RotateLeft(commit, flagCarry, value);
+                        rotatedValue = InstructionMethods.RotateLeft(ref commit, flagCarry, value);
                     }
                     else
                     {
-                        rotatedValue = InstructionMethods.RotateRight(commit, flagCarry, value);
+                        rotatedValue = InstructionMethods.RotateRight(ref commit, flagCarry, value);
                     }
                 }
 

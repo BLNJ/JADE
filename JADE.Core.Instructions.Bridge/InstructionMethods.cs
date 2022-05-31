@@ -9,7 +9,7 @@ namespace JADE.Core.Instructions.Bridge
 {
     public static class InstructionMethods
     {
-        private static void ZeroCheck(RegisterCommit registerCommit, int value)
+        private static void ZeroCheck(ref RegisterCommit registerCommit, int value)
         {
             if (value == 0)
             {
@@ -22,11 +22,11 @@ namespace JADE.Core.Instructions.Bridge
         }
 
         #region Arithmetic Operations
-        public static void AddA(RegisterCommit registerCommit, byte registerA, byte value)
+        public static void AddA(ref RegisterCommit registerCommit, byte registerA, byte value)
         {
             var result = (registerA + value);
 
-            ZeroCheck(registerCommit, registerA);
+            ZeroCheck(ref registerCommit, registerA);
 
             registerCommit.Flag_Negation = false;
             if (((result & 0xF) + (value & 0xF)) > 0xF)
@@ -50,7 +50,7 @@ namespace JADE.Core.Instructions.Bridge
             registerCommit.A = (byte)result;
         }
 
-        public static void AddHL(RegisterCommit registerCommit, ushort registerHL, ushort value)
+        public static void AddHL(ref RegisterCommit registerCommit, ushort registerHL, ushort value)
         {
             ushort register = registerHL;
             var result = (register + value);
@@ -77,7 +77,7 @@ namespace JADE.Core.Instructions.Bridge
             registerCommit.HL = (ushort)result;
         }
 
-        public static void AddCarry(RegisterCommit registerCommit, byte registerA, int registerFlagCarryInt, byte value)
+        public static void AddCarry(ref RegisterCommit registerCommit, byte registerA, int registerFlagCarryInt, byte value)
         {
             byte register = registerA;
             int carry = registerFlagCarryInt;
@@ -85,7 +85,7 @@ namespace JADE.Core.Instructions.Bridge
             var result_full = (register + value + carry);
             byte result = (byte)result_full;
 
-            ZeroCheck(registerCommit, result);
+            ZeroCheck(ref registerCommit, result);
             registerCommit.Flag_Negation = false;
             if (((register & 0xF) + (value & 0xF) + carry) > 0xf)
             {
@@ -108,12 +108,12 @@ namespace JADE.Core.Instructions.Bridge
             registerCommit.A = result;
         }
 
-        public static void Subtract(RegisterCommit registerCommit, byte registerA, byte value)
+        public static void Subtract(ref RegisterCommit registerCommit, byte registerA, byte value)
         {
             byte register = registerA;
             byte result = (byte)(register - value);
 
-            ZeroCheck(registerCommit, result);
+            ZeroCheck(ref registerCommit, result);
             registerCommit.Flag_Negation = true;
             if (((register & 0xF) - (value & 0xF)) < 0)
             {
@@ -136,7 +136,7 @@ namespace JADE.Core.Instructions.Bridge
             registerCommit.A = result;
         }
 
-        public static void SubtractCarry(RegisterCommit registerCommit, byte registerA, int registerClagCarryInt, byte value)
+        public static void SubtractCarry(ref RegisterCommit registerCommit, byte registerA, int registerClagCarryInt, byte value)
         {
             var carry = registerClagCarryInt;
             byte register = registerA;
@@ -144,7 +144,7 @@ namespace JADE.Core.Instructions.Bridge
             var result_full = (register - value - carry);
             byte result = (byte)result_full;
 
-            ZeroCheck(registerCommit, result);
+            ZeroCheck(ref registerCommit, result);
             registerCommit.Flag_Negation = true;
             if (result_full < 0)
             {
@@ -167,11 +167,11 @@ namespace JADE.Core.Instructions.Bridge
             registerCommit.A = result;
         }
 
-        public static byte Increment(RegisterCommit registerCommit, byte value)
+        public static byte Increment(ref RegisterCommit registerCommit, byte value)
         {
             var result = (byte)(value + 1);
 
-            ZeroCheck(registerCommit, result);
+            ZeroCheck(ref registerCommit, result);
 
             registerCommit.Flag_Negation = false;
 
@@ -187,11 +187,11 @@ namespace JADE.Core.Instructions.Bridge
             return result;
         }
 
-        public static byte Decrement(RegisterCommit registerCommit, byte value)
+        public static byte Decrement(ref RegisterCommit registerCommit, byte value)
         {
             byte result = (byte)(value - 1);
 
-            ZeroCheck(registerCommit, result);
+            ZeroCheck(ref registerCommit, result);
             registerCommit.Flag_Negation = true;
 
             if ((result & 0x0F) == 0x0F)
@@ -207,38 +207,38 @@ namespace JADE.Core.Instructions.Bridge
         }
         #endregion
         #region Logical Operations
-        public static void And(RegisterCommit registerCommit, byte registerA, byte value)
+        public static void And(ref RegisterCommit registerCommit, byte registerA, byte value)
         {
             byte register = registerA;
             byte result = (byte)(register & value);
 
             registerCommit.A = result;
 
-            ZeroCheck(registerCommit, result);
+            ZeroCheck(ref registerCommit, result);
             registerCommit.Flag_HalfCarry = true;
             registerCommit.Flag_Carry = false;
             registerCommit.Flag_Negation = false;
         }
 
-        public static void Or(RegisterCommit registerCommit, byte registerA, byte value)
+        public static void Or(ref RegisterCommit registerCommit, byte registerA, byte value)
         {
             byte register = registerA;
             byte result = (byte)(register | value);
 
             registerCommit.A = result;
 
-            ZeroCheck(registerCommit, result);
+            ZeroCheck(ref registerCommit, result);
             registerCommit.Flag_HalfCarry = false;
             registerCommit.Flag_Carry = false;
             registerCommit.Flag_Negation = false;
         }
 
-        public static void Xor(RegisterCommit registerCommit, byte registerA, byte value)
+        public static void Xor(ref RegisterCommit registerCommit, byte registerA, byte value)
         {
             byte register = registerA;
             byte result = (byte)(register ^ value);
 
-            ZeroCheck(registerCommit, result);
+            ZeroCheck(ref registerCommit, result);
             registerCommit.Flag_Negation = false;
             registerCommit.Flag_HalfCarry = false;
             registerCommit.Flag_Carry = false;
@@ -246,12 +246,12 @@ namespace JADE.Core.Instructions.Bridge
             registerCommit.A = result;
         }
 
-        public static void Cp(RegisterCommit registerCommit, byte registerA, byte value)
+        public static void Cp(ref RegisterCommit registerCommit, byte registerA, byte value)
         {
             byte register = registerA;
             byte result = (byte)(register - value);
 
-            ZeroCheck(registerCommit, result);
+            ZeroCheck(ref registerCommit, result);
             registerCommit.Flag_Negation = true;
 
             if (((register & 0xF) - (value & 0xF)) < 0)
@@ -273,7 +273,7 @@ namespace JADE.Core.Instructions.Bridge
         }
         #endregion
         #region Rotate Operations
-        public static byte RotateLeft(RegisterCommit registerCommit, bool registerFlagCarry, byte register)
+        public static byte RotateLeft(ref RegisterCommit registerCommit, bool registerFlagCarry, byte register)
         {
             bool carry = registerFlagCarry;
             bool willCarry = register.GetBit(7);
@@ -289,13 +289,13 @@ namespace JADE.Core.Instructions.Bridge
                 result = (byte)(result | 0);
             }
 
-            ZeroCheck(registerCommit, result);
+            ZeroCheck(ref registerCommit, result);
             registerCommit.Flag_Negation = false;
             registerCommit.Flag_HalfCarry = false;
 
             return result;
         }
-        public static byte RotateLeftCarry(RegisterCommit registerCommit, byte register)
+        public static byte RotateLeftCarry(ref RegisterCommit registerCommit, byte register)
         {
             bool carry = register.GetBit(7);
             byte result = (byte)(register << 1);
@@ -309,7 +309,7 @@ namespace JADE.Core.Instructions.Bridge
                 result = (byte)(result | 0);
             }
 
-            ZeroCheck(registerCommit, result);
+            ZeroCheck(ref registerCommit, result);
             registerCommit.Flag_Carry = carry;
             registerCommit.Flag_HalfCarry = false;
             registerCommit.Flag_Negation = false;
@@ -317,7 +317,7 @@ namespace JADE.Core.Instructions.Bridge
             return result;
         }
 
-        public static byte RotateRight(RegisterCommit registerCommit, bool registerFlagCarry, byte register)
+        public static byte RotateRight(ref RegisterCommit registerCommit, bool registerFlagCarry, byte register)
         {
             bool carry = registerFlagCarry;
             bool willCarry = register.GetBit(0);
@@ -334,14 +334,14 @@ namespace JADE.Core.Instructions.Bridge
                 result = (byte)(result | (0 << 7));
             }
 
-            ZeroCheck(registerCommit, result);
+            ZeroCheck(ref registerCommit, result);
             registerCommit.Flag_HalfCarry = false;
             registerCommit.Flag_Negation = false;
 
             return result;
         }
 
-        public static byte RotateRightCarry(RegisterCommit registerCommit, byte register)
+        public static byte RotateRightCarry(ref RegisterCommit registerCommit, byte register)
         {
             bool carry = register.GetBit(0);
             byte result = (byte)(register << 1);
@@ -355,7 +355,7 @@ namespace JADE.Core.Instructions.Bridge
                 result = (byte)(result | (0 >> 7));
             }
 
-            ZeroCheck(registerCommit, result);
+            ZeroCheck(ref registerCommit, result);
             registerCommit.Flag_Carry = carry;
             registerCommit.Flag_HalfCarry = false;
             registerCommit.Flag_Negation = false;
@@ -363,12 +363,12 @@ namespace JADE.Core.Instructions.Bridge
             return result;
         }
 
-        public static byte ShiftRightLogical(RegisterCommit registerCommit, byte register)
+        public static byte ShiftRightLogical(ref RegisterCommit registerCommit, byte register)
         {
             bool lowestNibble = register.GetBit(0);
             byte result = (byte)(register >> 1);
 
-            ZeroCheck(registerCommit, result);
+            ZeroCheck(ref registerCommit, result);
             registerCommit.Flag_Carry = lowestNibble;
             registerCommit.Flag_HalfCarry = false;
             registerCommit.Flag_Negation = false;
@@ -376,7 +376,7 @@ namespace JADE.Core.Instructions.Bridge
             return result;
         }
 
-        public static byte ShiftRightArithmetic(RegisterCommit registerCommit, byte register)
+        public static byte ShiftRightArithmetic(ref RegisterCommit registerCommit, byte register)
         {
             bool lowestNibble = register.GetBit(0);
             bool highestNibble = register.GetBit(7);
@@ -384,7 +384,7 @@ namespace JADE.Core.Instructions.Bridge
             byte result = (byte)(register >> 1);
             result = result.SetBit(7, highestNibble);
 
-            ZeroCheck(registerCommit, result);
+            ZeroCheck(ref registerCommit, result);
             registerCommit.Flag_Carry = lowestNibble;
             registerCommit.Flag_HalfCarry = false;
             registerCommit.Flag_Negation = false;
@@ -392,12 +392,12 @@ namespace JADE.Core.Instructions.Bridge
             return result;
         }
 
-        public static byte ShiftLeftArithmetic(RegisterCommit registerCommit, byte register)
+        public static byte ShiftLeftArithmetic(ref RegisterCommit registerCommit, byte register)
         {
             bool carryBit = register.GetBit(7);
             byte result = (byte)(register << 1);
 
-            ZeroCheck(registerCommit, result);
+            ZeroCheck(ref registerCommit, result);
             registerCommit.Flag_Carry = carryBit;
             registerCommit.Flag_HalfCarry = false;
             registerCommit.Flag_Negation = false;
@@ -407,7 +407,7 @@ namespace JADE.Core.Instructions.Bridge
         #endregion
 
         #region Bit Operations
-        public static void Bit(RegisterCommit registerCommit, int bitpos, byte register)
+        public static void Bit(ref RegisterCommit registerCommit, int bitpos, byte register)
         {
             bool bit = register.GetBit(bitpos);
 
@@ -475,7 +475,7 @@ namespace JADE.Core.Instructions.Bridge
         }
         #endregion
 
-        public static byte Swap(RegisterCommit registerCommit, byte value)
+        public static byte Swap(ref RegisterCommit registerCommit, byte value)
         {
             //byte result = (byte)(((value & 0x0F) << 4) | ((value & 0xF0) >> 4));
 
@@ -489,7 +489,7 @@ namespace JADE.Core.Instructions.Bridge
             result = result.SetUpper(lowNibbles);
             result = result.SetLower(highNibbles);
 
-            ZeroCheck(registerCommit, result);
+            ZeroCheck(ref registerCommit, result);
             registerCommit.Flag_Negation = false;
             registerCommit.Flag_HalfCarry = false;
             registerCommit.Flag_Carry = false;

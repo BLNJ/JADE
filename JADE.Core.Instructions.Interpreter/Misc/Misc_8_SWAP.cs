@@ -42,7 +42,7 @@ namespace JADE.Core.Instructions.Interpreter.Misc
                 byte value = (byte)parametersList[0].Value;
 
                 RegisterCommit registerCommit = new RegisterCommit();
-                byte valueSwap = InstructionMethods.Swap(registerCommit, value);
+                byte valueSwap = InstructionMethods.Swap(ref registerCommit, value);
 
                 changesList.AddRegisterCommit(registerCommit);
                 if (sourceRegister == ParameterRegister.HL)

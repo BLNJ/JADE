@@ -73,7 +73,7 @@ namespace JADE.Core.Instructions.Interpreter.ArithmeticLogicUnit
                 byte value = (byte)parametersList[2].Value;
 
                 RegisterCommit registerCommit = new RegisterCommit();
-                InstructionMethods.SubtractCarry(registerCommit, registerA, registerFlagCarryInt, value);
+                InstructionMethods.SubtractCarry(ref registerCommit, registerA, registerFlagCarryInt, value);
 
                 changesList.AddRegisterCommit(registerCommit);
 

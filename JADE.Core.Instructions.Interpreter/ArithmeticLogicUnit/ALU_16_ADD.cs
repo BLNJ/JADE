@@ -53,7 +53,7 @@ namespace JADE.Core.Instructions.Interpreter.ArithmeticLogicUnit
                 ushort registerCalc = (ushort)parametersList[1].Value;
 
                 RegisterCommit registerCommit = new RegisterCommit();
-                InstructionMethods.AddHL(registerCommit, registerA, registerCalc);
+                InstructionMethods.AddHL(ref registerCommit, registerA, registerCalc);
 
                 //changesList.Add(new Bridge.Register.RegisterInstructionParameterCommitResponse(registerCommit));
                 parametersList.AddRegisterCommit(registerCommit);

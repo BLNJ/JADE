@@ -71,7 +71,7 @@ namespace JADE.Core.Instructions.Interpreter.ArithmeticLogicUnit
                 byte value = (byte)parametersList[1].Value;
 
                 RegisterCommit registerCommit = new RegisterCommit();
-                InstructionMethods.AddA(registerCommit, registerA, value);
+                InstructionMethods.AddA(ref registerCommit, registerA, value);
 
                 changesList.AddRegisterCommit(registerCommit);
 

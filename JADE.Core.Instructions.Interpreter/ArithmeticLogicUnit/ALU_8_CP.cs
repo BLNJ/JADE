@@ -72,7 +72,7 @@ namespace JADE.Core.Instructions.Interpreter.ArithmeticLogicUnit
 
                 RegisterCommit registerCommit = new RegisterCommit();
                 //InstructionMethods.And(registerCommit, registerA, value);
-                InstructionMethods.Cp(registerCommit, registerA, value);
+                InstructionMethods.Cp(ref registerCommit, registerA, value);
 
                 changesList.AddRegisterCommit(registerCommit);
 

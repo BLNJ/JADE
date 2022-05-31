@@ -68,16 +68,16 @@ namespace JADE.Core.Instructions.Interpreter.Misc
                 {
                     if (operationCode <= 0x7)
                     {
-                        shiftedValue = InstructionMethods.ShiftLeftArithmetic(commit, value);
+                        shiftedValue = InstructionMethods.ShiftLeftArithmetic(ref commit, value);
                     }
                     else
                     {
-                        shiftedValue = InstructionMethods.ShiftRightArithmetic(commit, value);
+                        shiftedValue = InstructionMethods.ShiftRightArithmetic(ref commit, value);
                     }
                 }
                 else
                 {
-                    shiftedValue = InstructionMethods.ShiftRightLogical(commit, value);
+                    shiftedValue = InstructionMethods.ShiftRightLogical(ref commit, value);
                 }
 
                 changesList.AddRegisterCommit(commit);
