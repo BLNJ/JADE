@@ -161,5 +161,9 @@ namespace JADE.Core.Instructions.Bridge
         {
             changesList.Add(new Jump.CallInstructionParameterResponse(value));
         }
+        public static void AddReturn(this List<InstructionParameterResponseBase> changesList)
+        {
+            changesList.Add(new Jump.ReturnInstructionParameterResponse());
+        }
     }
 }

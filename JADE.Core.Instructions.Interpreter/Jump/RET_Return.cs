@@ -76,7 +76,8 @@ namespace JADE.Core.Instructions.Interpreter.Jump
 
                 if (process)
                 {
-                    InstructionMethods.Ret();
+                    //InstructionMethods.Ret();
+                    changesList.AddReturn();
                 }
 
                 return 8;

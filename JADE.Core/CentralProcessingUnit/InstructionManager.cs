@@ -321,6 +321,11 @@ namespace JADE.Core.CentralProcessingUnit
                     this.cpu.Stack.PushUShort(this.cpu.ProgramCounter.Value);
                     this.cpu.ProgramCounter.Value = (ushort)change.Value;
                 }
+                else if(changeType == typeof(Instructions.Bridge.Jump.ReturnInstructionParameterResponse))
+                {
+                    ushort pc = this.cpu.Stack.PopUShort();
+                    this.cpu.ProgramCounter.Value = pc;
+                }
                 else
                 {
                     throw new NotImplementedException("Couldnt process unknown Type: " + changeType.ToString());
