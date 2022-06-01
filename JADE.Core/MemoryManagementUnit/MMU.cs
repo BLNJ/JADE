@@ -161,6 +161,15 @@ namespace JADE.Core.MemoryManagementUnit
             this.MappedMemory.Remove(mappedMemory);
             mappedMemory.Close();
         }
+        public void RemoveAllMappedStreams()
+        {
+            for(int i = 0; i < this.MappedMemory.Count; i++)
+            {
+                this.MappedMemory[i].Close();
+            }
+
+            this.MappedMemory.Clear();
+        }
 
         public void DumpMMU()
         {
