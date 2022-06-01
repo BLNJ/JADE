@@ -55,6 +55,9 @@ namespace JADE.Core.Instructions.Interpreter.ArithmeticLogicUnit
                     case 0xFE:
                         parametersList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedByte);
                         break;
+
+                    default:
+                        throw new NotImplementedException();
                 }
 
                 if (register.HasValue)

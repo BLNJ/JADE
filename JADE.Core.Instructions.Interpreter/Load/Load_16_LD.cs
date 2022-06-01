@@ -74,7 +74,7 @@ namespace JADE.Core.Instructions.Interpreter.Load
             }
         }
 
-        [Instruction(0xF8, "LD SP, HL")]
+        [Instruction(0xF8, "LD SP, HL + n")]
         public class HL_SP_N : IInstruction
         {
             public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
@@ -158,13 +158,17 @@ namespace JADE.Core.Instructions.Interpreter.Load
                 }
                 else
                 {
-                    if(opCode == 0xFA)
+                    switch(opCode)
                     {
-                        parametersList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, this.address.Value);
-                    }
-                    else
-                    {
-                        parametersList.AddRegister(ParameterRegister.A);
+                        case 0xEA:
+                            parametersList.AddRegister(ParameterRegister.A);
+                            break;
+                        case 0xFA:
+                            parametersList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, this.address.Value);
+                            break;
+
+                        default:
+                            throw new NotImplementedException();
                     }
 
                     return true;
@@ -179,15 +183,19 @@ namespace JADE.Core.Instructions.Interpreter.Load
                 }
                 else
                 {
-                    if(opCode == 0xEA)
+                    byte value = (byte)parametersList[1].Value;
+
+                    switch (opCode)
                     {
-                        byte registerA = (byte)parametersList[1].Value;
-                        changesList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, this.address.Value, registerA);
-                    }
-                    else
-                    {
-                        byte value = (byte)parametersList[1].Value;
-                        changesList.AddRegister(ParameterRegister.A, value);
+                        case 0xEA:
+                            changesList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, this.address.Value, value);
+                            break;
+                        case 0xFA:
+                            changesList.AddRegister(ParameterRegister.A, value);
+                            break;
+
+                        default:
+                            throw new NotImplementedException();
                     }
                 }
 

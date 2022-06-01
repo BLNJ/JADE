@@ -100,6 +100,9 @@ namespace JADE.Core.Instructions.Interpreter.Misc
                             rotatedValue = InstructionMethods.RotateLeft(ref commit, flagCarry, value);
                         }
                         break;
+
+                    default:
+                        throw new NotImplementedException();
                 }
 
                 if (rotatedValue == null)

@@ -11,11 +11,23 @@ namespace JADE.Core.Instructions.Interpreter.Jump
     public static class Jump_16_JP
     {
         [Instruction(0xC3, "JP nn")]
+        [Instruction(0xE9, "JP (HL)")]
         public class xx : IInstruction
         {
             public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
             {
-                parametersList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedShort);
+                switch(opCode)
+                {
+                    case 0xC3:
+                        parametersList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedShort);
+                        break;
+                    case 0xE9:
+                        parametersList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedShort, ParameterRegister.HL);
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
+                }
 
                 return true;
             }
@@ -26,25 +38,6 @@ namespace JADE.Core.Instructions.Interpreter.Jump
                 changesList.AddJump(jpValue);
 
                 return 12;
-            }
-        }
-
-        [Instruction(0xE9, "JP (HL)")]
-        public class HL : IInstruction
-        {
-            public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
-            {
-                parametersList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedShort, ParameterRegister.HL);
-
-                return true;
-            }
-
-            public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
-            {
-                ushort jpValue = (ushort)parametersList[0].Value;
-                changesList.AddJump(jpValue);
-
-                return 4;
             }
         }
 

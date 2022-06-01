@@ -152,12 +152,6 @@ namespace JADE.Core.Instructions.Interpreter.Load
                 ParameterRegister sourceRegister = Helpers.BitHelper.OpCodeLowerNibbleToRegister(opCode);
                 byte value = (byte)parametersList[0].Value;
 
-                //TODO I doubt theres a cleaner way, since thats a unique edge-case, but future me will find a way... surely
-                if (opCode >= 0x70 && opCode <= 0x77)
-                {
-                    destinationRegister = ParameterRegister.HL;
-                }
-
                 if (destinationRegister == ParameterRegister.HL)
                 {
                     changesList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.HL, value);
@@ -194,13 +188,18 @@ namespace JADE.Core.Instructions.Interpreter.Load
                 byte registerA = (byte)parametersList[0].Value;
 
                 ParameterRegister destinationRegister;
-                if(opCode == 0x02)
+
+                switch(opCode)
                 {
-                    destinationRegister = ParameterRegister.BC;
-                }
-                else
-                {
-                    destinationRegister = ParameterRegister.DE;
+                    case 0x02:
+                        destinationRegister = ParameterRegister.BC;
+                        break;
+                    case 0x12:
+                        destinationRegister = ParameterRegister.DE;
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
                 }
 
                 changesList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, destinationRegister, registerA);
@@ -263,13 +262,17 @@ namespace JADE.Core.Instructions.Interpreter.Load
         {
             public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
             {
-                if(opCode == 0x0A)
+                switch(opCode)
                 {
-                    parametersList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.BC);
-                }
-                else
-                {
-                    parametersList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.DE);
+                    case 0x0A:
+                        parametersList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.BC);
+                        break;
+                    case 0x1A:
+                        parametersList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.DE);
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
                 }
 
                 return true;
@@ -342,6 +345,9 @@ namespace JADE.Core.Instructions.Interpreter.Load
                     case 0xF2:
                         parametersList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.C, 0xFF00);
                         break;
+
+                    default:
+                        throw new NotImplementedException();
                 }
 
                 return true;
@@ -359,6 +365,9 @@ namespace JADE.Core.Instructions.Interpreter.Load
                     case 0xF2:
                         changesList.AddRegister(ParameterRegister.A, value);
                         break;
+
+                    default:
+                        throw new NotImplementedException();
                 }
 
                 return 8;

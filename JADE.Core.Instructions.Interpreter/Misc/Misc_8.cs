@@ -11,40 +11,46 @@ namespace JADE.Core.Instructions.Interpreter.Misc
     public static class Misc_8
     {
         [Instruction(0x3F, "CCF")]
-        public class CCF : IInstruction
-        {
-            public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
-            {
-                parametersList.AddRegisterFlag(ParameterFlag.Flag_Carry);
-
-                return true;
-            }
-
-            public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
-            {
-                bool flagCarry = (bool)parametersList[0].Value;
-
-                changesList.AddRegisterFlag(ParameterFlag.Flag_Negation, false);
-                changesList.AddRegisterFlag(ParameterFlag.Flag_HalfCarry, false);
-                changesList.AddRegisterFlag(ParameterFlag.Flag_Carry, !flagCarry);
-
-                return 4;
-            }
-        }
-
         [Instruction(0x37, "SCF")]
-        public class SCF : IInstruction
+        public class xCF : IInstruction
         {
             public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
             {
+                switch(opCode)
+                {
+                    case 0x3F:
+                        parametersList.AddRegisterFlag(ParameterFlag.Flag_Carry);
+                        break;
+
+                    case 0x37:
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
+                }
+
                 return true;
             }
 
             public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
             {
-                changesList.AddRegisterFlag(ParameterFlag.Flag_Carry, true);
-                changesList.AddRegisterFlag(ParameterFlag.Flag_HalfCarry, false);
+                if (opCode == 0x3F)
+                {
+                    bool flagCarry = (bool)parametersList[0].Value;
+                    changesList.AddRegisterFlag(ParameterFlag.Flag_Carry, !flagCarry);
+                }
+                else if(opCode == 0x37)
+                {
+                    changesList.AddRegisterFlag(ParameterFlag.Flag_Carry, true);
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+
                 changesList.AddRegisterFlag(ParameterFlag.Flag_Negation, false);
+                changesList.AddRegisterFlag(ParameterFlag.Flag_HalfCarry, false);
+
 
                 return 4;
             }

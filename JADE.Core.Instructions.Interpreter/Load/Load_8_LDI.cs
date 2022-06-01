@@ -16,13 +16,17 @@ namespace JADE.Core.Instructions.Interpreter.Load
         {
             public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
             {
-                if(opCode == 0x22)
+                switch(opCode)
                 {
-                    parametersList.AddRegister(ParameterRegister.A);
-                }
-                else
-                {
-                    parametersList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.HL);
+                    case 0x2A:
+                        parametersList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.HL);
+                        break;
+                    case 0x22:
+                        parametersList.AddRegister(ParameterRegister.A);
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
                 }
 
                 parametersList.AddRegister(ParameterRegister.HL);
@@ -35,13 +39,17 @@ namespace JADE.Core.Instructions.Interpreter.Load
                 byte value = (byte)parametersList[0].Value;
                 ushort registerHL = (ushort)parametersList[1].Value;
 
-                if (opCode == 0x22)
+                switch (opCode)
                 {
-                    changesList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.HL, value);
-                }
-                else
-                {
-                    changesList.AddRegister(ParameterRegister.A, value);
+                    case 0x2A:
+                        changesList.AddRegister(ParameterRegister.A, value);
+                        break;
+                    case 0x22:
+                        changesList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.HL, value);
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
                 }
 
                 registerHL += 1;

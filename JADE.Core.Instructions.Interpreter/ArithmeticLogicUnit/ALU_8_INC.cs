@@ -52,9 +52,12 @@ namespace JADE.Core.Instructions.Interpreter.ArithmeticLogicUnit
                     case 0x34:
                         parametersList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.HL);
                         break;
-                        //case 0xC6:
-                        //    parametersList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedByte);
-                        //    break;
+                    //case 0xC6:
+                    //    parametersList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedByte);
+                    //    break;
+
+                    default:
+                        throw new NotImplementedException();
                 }
 
                 if (register.HasValue)
