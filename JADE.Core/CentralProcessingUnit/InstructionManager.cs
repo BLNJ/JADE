@@ -315,6 +315,12 @@ namespace JADE.Core.CentralProcessingUnit
                             throw new NotImplementedException();
                     }
                 }
+                else if(changeType == typeof(Instructions.Bridge.Jump.CallInstructionParameterResponse))
+                {
+                    Instructions.Bridge.Jump.CallInstructionParameterResponse change = (Instructions.Bridge.Jump.CallInstructionParameterResponse)proposedChange;
+                    this.cpu.Stack.PushUShort(this.cpu.ProgramCounter.Value);
+                    this.cpu.ProgramCounter.Value = (ushort)change.Value;
+                }
                 else
                 {
                     throw new NotImplementedException("Couldnt process unknown Type: " + changeType.ToString());

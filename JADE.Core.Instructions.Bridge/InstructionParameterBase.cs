@@ -37,7 +37,8 @@ namespace JADE.Core.Instructions.Bridge
             Flag,
             Memory,
             MemoryRelative,
-            Stack
+            Stack,
+            Call,
         }
     }
 }

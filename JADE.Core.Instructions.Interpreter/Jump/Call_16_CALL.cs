@@ -75,7 +75,8 @@ namespace JADE.Core.Instructions.Interpreter.Jump
 
                 if (doCall)
                 {
-                    InstructionMethods.Call(value);
+                    changesList.AddCall(value);
+                    //InstructionMethods.Call(value);
                 }
 
                 return 12;

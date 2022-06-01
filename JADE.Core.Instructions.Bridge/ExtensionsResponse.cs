@@ -156,5 +156,10 @@ namespace JADE.Core.Instructions.Bridge
         {
             changesList.Add(new Stack.StackInstructionParameterResponse(Bridge.Stack.ParameterType.PUSH, Bridge.Stack.ParameterValueType.UnsignedByte, value));
         }
+        
+        public static void AddCall(this List<InstructionParameterResponseBase> changesList, ushort value)
+        {
+            changesList.Add(new Jump.CallInstructionParameterResponse(value));
+        }
     }
 }
