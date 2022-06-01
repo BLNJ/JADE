@@ -72,20 +72,20 @@ namespace JADE.Core.Instructions.Interpreter.ArithmeticLogicUnit
 
                 RegisterCommit registerCommit = new RegisterCommit();
                 //InstructionMethods.AddA(registerCommit, registerA, value);
-                InstructionMethods.Decrement(ref registerCommit, value);
+                byte newValue = InstructionMethods.Decrement(ref registerCommit, value);
 
                 changesList.AddRegisterCommit(registerCommit);
 
                 if (opCode == 0x35)
                 {
-                    changesList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.HL, value);
+                    changesList.AddRelativeMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, ParameterRegister.HL, newValue);
                     return 12;
                 }
                 else
                 {
                     RegisterInstructionParameterResponse registerResponse = (RegisterInstructionParameterResponse)parametersList[0];
 
-                    changesList.AddRegister(registerResponse.Register, value);
+                    changesList.AddRegister(registerResponse.Register, newValue);
                     return 4;
                 }
             }
