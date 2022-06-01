@@ -86,6 +86,50 @@ namespace JADE.Core.Instructions.Interpreter.Load
         [Instruction(0x7F, "LOAD A, A")]
         public class x_n : IInstruction
         {
+            private static ParameterRegister opCodeDestinationRegister(byte opCode)
+            {
+                if(opCode >= 0x40 && opCode <= 0x47)
+                {
+                    return ParameterRegister.B;
+                }
+                else if(opCode >= 0x48 && opCode <= 0x4F)
+                {
+                    return ParameterRegister.C;
+                }
+
+                else if (opCode >= 0x50 && opCode <= 0x57)
+                {
+                    return ParameterRegister.D;
+                }
+                else if (opCode >= 0x58 && opCode <= 0x5F)
+                {
+                    return ParameterRegister.E;
+                }
+
+                else if (opCode >= 0x60 && opCode <= 0x67)
+                {
+                    return ParameterRegister.H;
+                }
+                else if (opCode >= 0x68 && opCode <= 0x6F)
+                {
+                    return ParameterRegister.L;
+                }
+
+                else if (opCode >= 0x70 && opCode <= 0x77)
+                {
+                    return ParameterRegister.HL;
+                }
+                else if (opCode >= 0x78 && opCode <= 0x7F)
+                {
+                    return ParameterRegister.A;
+                }
+
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
             public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
             {
                 ParameterRegister sourceRegister = Helpers.BitHelper.OpCodeLowerNibbleToRegister(opCode);
@@ -104,7 +148,7 @@ namespace JADE.Core.Instructions.Interpreter.Load
 
             public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
             {
-                ParameterRegister destinationRegister = Helpers.BitHelper.OpCodeUpperNibbleToRegister(opCode);
+                ParameterRegister destinationRegister = opCodeDestinationRegister(opCode);
                 ParameterRegister sourceRegister = Helpers.BitHelper.OpCodeLowerNibbleToRegister(opCode);
                 byte value = (byte)parametersList[0].Value;
 
