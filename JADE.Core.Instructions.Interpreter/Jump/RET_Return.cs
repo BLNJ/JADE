@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JADE.Core.Instructions.Interpreter.Misc
+namespace JADE.Core.Instructions.Interpreter.Jump
 {
     public static class RET_Return
     {
