@@ -69,7 +69,7 @@ namespace JADE.Core.Instructions.Interpreter.Misc
 
             public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
             {
-                byte operationCode = Helpers.BitHelper.OpCodeUpperNibbleToBitPosition(opCode); //TODO Function needs to be renamed
+                byte operationCode = opCode.GetUpper();
                 byte operationLowerNibble = opCode.GetLower();
                 ParameterRegister registerSource = Helpers.BitHelper.OpCodeUpperNibbleToRegister(opCode);
                 byte value = (byte)parametersList[0].Value;
