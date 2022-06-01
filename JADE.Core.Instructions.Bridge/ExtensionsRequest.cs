@@ -26,7 +26,7 @@ namespace JADE.Core.Instructions.Bridge
         {
             parametersList.Add(new RelativeMemoryInstructionParameterRequest(requestType, baseAddressRegister));
         }
-        public static void AddRelativeMemory(this List<InstructionParameterRequestBase> parametersList, ParameterRequestType requestType, ParameterRegister baseAddressRegister, long address)
+        public static void AddRelativeMemory(this List<InstructionParameterRequestBase> parametersList, ParameterRequestType requestType, ParameterRegister baseAddressRegister, ushort address)
         {
             parametersList.Add(new RelativeMemoryInstructionParameterRequest(requestType, baseAddressRegister, address));
         }

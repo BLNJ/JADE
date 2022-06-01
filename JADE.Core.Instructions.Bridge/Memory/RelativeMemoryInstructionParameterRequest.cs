@@ -18,7 +18,7 @@ namespace JADE.Core.Instructions.Bridge.Memory
             get;
             private set;
         }
-        public long Address
+        public ushort Address
         {
             get;
             private set;
@@ -28,7 +28,7 @@ namespace JADE.Core.Instructions.Bridge.Memory
         {
         }
 
-        public RelativeMemoryInstructionParameterRequest(ParameterRequestType requestType, Register.ParameterRegister baseAddressRegister, long address) : base(ParameterRequestSource.MemoryRelative)
+        public RelativeMemoryInstructionParameterRequest(ParameterRequestType requestType, Register.ParameterRegister baseAddressRegister, ushort address) : base(ParameterRequestSource.MemoryRelative)
         {
             this.RequestType = requestType;
             this.BaseAddressRegister = baseAddressRegister;

@@ -437,9 +437,9 @@ namespace JADE.Core.CentralProcessingUnit
                 {
                     Instructions.Bridge.Memory.RelativeMemoryInstructionParameterRequest request = (Instructions.Bridge.Memory.RelativeMemoryInstructionParameterRequest)parameter;
 
-                    long baseAddress = (long)parameterRegisterToValue(request.BaseAddressRegister);
+                    ushort baseAddress = (ushort)parameterRegisterToValue(request.BaseAddressRegister);
 
-                    baseAddress = (baseAddress + request.Address);
+                    baseAddress = (ushort)(baseAddress + request.Address);
 
                     object value;
                     switch (request.RequestType)
