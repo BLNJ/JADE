@@ -39,7 +39,8 @@ namespace JADE.Core.Instructions.Bridge
             MemoryRelative,
             Stack,
             Call,
-            Return
+            Return,
+            Jump
         }
     }
 }

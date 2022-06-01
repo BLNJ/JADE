@@ -326,6 +326,24 @@ namespace JADE.Core.CentralProcessingUnit
                     ushort pc = this.cpu.Stack.PopUShort();
                     this.cpu.ProgramCounter.Value = pc;
                 }
+                else if(changeType == typeof(Instructions.Bridge.Jump.JumpInstructionParameterResponse))
+                {
+                    Instructions.Bridge.Jump.JumpInstructionParameterResponse change = (Instructions.Bridge.Jump.JumpInstructionParameterResponse)proposedChange;
+
+                    Type valueType = change.Value.GetType();
+                    if (valueType == typeof(ushort))
+                    {
+                        this.cpu.ProgramCounter.Value = (ushort)change.Value;
+                    }
+                    else if(valueType == typeof(sbyte))
+                    {
+                        this.cpu.ProgramCounter.Value = (ushort)(this.cpu.ProgramCounter.Value + ((sbyte)change.Value));
+                    }
+                    else
+                    {
+                        throw new NotImplementedException("Unknown JumpInstructionParameterResponse ValueType: " + valueType.ToString());
+                    }
+                }
                 else
                 {
                     throw new NotImplementedException("Couldnt process unknown Type: " + changeType.ToString());

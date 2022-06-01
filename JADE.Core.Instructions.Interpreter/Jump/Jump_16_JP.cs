@@ -22,9 +22,8 @@ namespace JADE.Core.Instructions.Interpreter.Jump
 
             public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
             {
-                throw new NotImplementedException();
                 ushort jpValue = (ushort)parametersList[0].Value;
-                //Change PC here
+                changesList.AddJump(jpValue);
 
                 return 12;
             }
@@ -42,9 +41,8 @@ namespace JADE.Core.Instructions.Interpreter.Jump
 
             public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
             {
-                throw new NotImplementedException();
                 ushort jpValue = (ushort)parametersList[0].Value;
-                //Change PC here
+                changesList.AddJump(jpValue);
 
                 return 4;
             }
@@ -113,8 +111,7 @@ namespace JADE.Core.Instructions.Interpreter.Jump
 
                 if(process)
                 {
-                    throw new NotImplementedException();
-                    //Yo Future me: Do Jump here
+                    changesList.AddJump(jpValue);
                 }
 
                 return 12;

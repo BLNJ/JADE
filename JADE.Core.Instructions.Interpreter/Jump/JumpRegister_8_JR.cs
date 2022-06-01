@@ -22,9 +22,8 @@ namespace JADE.Core.Instructions.Interpreter.Jump
 
             public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
             {
-                throw new NotImplementedException();
                 sbyte jpValue = (sbyte)parametersList[0].Value;
-                //TODO do jump here
+                changesList.AddJump(jpValue);
 
                 return 8;
             }
@@ -93,8 +92,7 @@ namespace JADE.Core.Instructions.Interpreter.Jump
 
                 if (process)
                 {
-                    throw new NotImplementedException();
-                    //TODO Do Jump here
+                    changesList.AddJump(jpValue);
                 }
 
                 return 8;
