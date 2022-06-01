@@ -77,14 +77,16 @@ namespace JADE.Core
             //testThread.Start();
 
             //TODO proper loop
-            System.Threading.Thread cpuThread = new System.Threading.Thread(CPULoop);
-            cpuThread.Name = "cpuThread";
+            //System.Threading.Thread cpuThread = new System.Threading.Thread(CPULoop);
+            //cpuThread.Name = "cpuThread";
 
-            System.Threading.Thread gpuThread = new System.Threading.Thread(GPULoop);
-            gpuThread.Name = "gpuThread";
+            //System.Threading.Thread gpuThread = new System.Threading.Thread(GPULoop);
+            //gpuThread.Name = "gpuThread";
 
-            cpuThread.Start();
-            gpuThread.Start();
+            //cpuThread.Start();
+            //gpuThread.Start();
+
+            testLoop();
         }
 
         public void Pause()
@@ -111,7 +113,7 @@ namespace JADE.Core
             while (true)
             {
                 this.CPU.Step();
-                //this.ppu.Process();
+                this.PPU.Step();
             }
         }
 
