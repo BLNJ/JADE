@@ -132,6 +132,7 @@ namespace JADE.Core.CentralProcessingUnit
                 this.Registers.PC = 0xC;
             }
 
+            ushort opPC = this.Registers.PC;
             byte op = this.MMU.Stream.ReadByte(this.Registers.PC);
             this.Registers.PC++;
 
@@ -185,7 +186,7 @@ namespace JADE.Core.CentralProcessingUnit
             //    return cycles;
             //}
 
-            byte cycles = this.instructionManager.CycleInstruction(op, isExtended);
+            byte cycles = this.instructionManager.CycleInstruction(op, isExtended, opPC);
         }
 
     }

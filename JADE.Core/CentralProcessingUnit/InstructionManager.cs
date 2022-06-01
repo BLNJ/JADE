@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using JADE.Core.Instructions.Bridge;
+using JADE.Helpers;
 
 namespace JADE.Core.CentralProcessingUnit
 {
@@ -12,6 +13,10 @@ namespace JADE.Core.CentralProcessingUnit
         CPU cpu;
 
         Dictionary<JADE.Core.Instructions.Bridge.InstructionAttribute, Type> instructions = new Dictionary<Instructions.Bridge.InstructionAttribute, Type>();
+
+        //This is fucking ugly
+        //I think Im having a stroke as Im reeakding tiadjnsdkia
+        //JADE.Helpers.InstructionHistory<List<Instructions.Bridge.InstructionParameterRequestBase>, List<Instructions.Bridge.InstructionParameterResponseBase>, List<Instructions.Bridge.InstructionParameterResponseBase>> instructionHistory = new Helpers.InstructionHistory<List<InstructionParameterRequestBase>, List<InstructionParameterResponseBase>, List<InstructionParameterResponseBase>>(1000);
 
         public InstructionManager(CPU cpu)
         {
@@ -71,7 +76,7 @@ namespace JADE.Core.CentralProcessingUnit
             return null;
         }
 
-        public byte CycleInstruction(byte opCode, bool isExtended)
+        public byte CycleInstruction(byte opCode, bool isExtended, ushort opCodeProgramCounter)
         {
             Instructions.Bridge.IInstruction instruction = this.FindInstruction(opCode, isExtended);
             if (instruction == null)
@@ -96,6 +101,12 @@ namespace JADE.Core.CentralProcessingUnit
                     preparedParameters = processRequestedParameters(parameters);
                     
                     cycles = instruction.Process(opCode, ref preparedParameters, ref proposedChanges);
+
+                    //This doesnt work right now since I cant do my hacky memory copy method
+                    //Thank you .NET Core
+                    //this.instructionHistory.AddEntry(opCodeProgramCounter, isExtended, opCode, parameters, preparedParameters, proposedChanges);
+                    //Easy solution would be to fuck everything thats not Windows... but at that point I could go back to the stoneage and use .NET Framework
+
                     processProposedChanges(proposedChanges);
                 }
                 while (!finishPrepare);
