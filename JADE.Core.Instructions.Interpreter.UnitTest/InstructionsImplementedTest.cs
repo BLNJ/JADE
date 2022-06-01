@@ -11,11 +11,9 @@ namespace JADE.Core.Instructions.Interpreter.UnitTest
     {
         List<JADE.Core.Instructions.Bridge.InstructionAttribute> instructionAttributes = new List<JADE.Core.Instructions.Bridge.InstructionAttribute>();
 
-        [SetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
-            instructionAttributes.Clear();
-
             Type instructionInterfaceType = typeof(JADE.Core.Instructions.Bridge.IInstruction);
             Type instructionAttributeType = typeof(JADE.Core.Instructions.Bridge.InstructionAttribute);
 
@@ -50,6 +48,12 @@ namespace JADE.Core.Instructions.Interpreter.UnitTest
                     }
                 }
             }
+        }
+
+        [OneTimeTearDown]
+        public void TearDown()
+        {
+            this.instructionAttributes.Clear();
         }
 
         [Test]

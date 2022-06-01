@@ -22,6 +22,13 @@ namespace JADE.Core.UnitTest
             device.CPU.Registers.SP = stackPosition;
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            this.device.MMU.RemoveAllMappedStreams();
+            this.device.Reset();
+        }
+
         [Test]
         public void StackByteTest()
         {
