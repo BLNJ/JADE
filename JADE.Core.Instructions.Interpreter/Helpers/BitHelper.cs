@@ -26,20 +26,28 @@ namespace JADE.Core.Instructions.Interpreter.Helpers
             switch(opCodePart)
             {
                 case 7:
+                case 0xF:
                     return Bridge.Register.ParameterRegister.A;
                 case 0:
+                case 0x8:
                     return Bridge.Register.ParameterRegister.B;
                 case 1:
+                case 0x9:
                     return Bridge.Register.ParameterRegister.C;
                 case 2:
+                case 0xA:
                     return Bridge.Register.ParameterRegister.D;
                 case 3:
+                case 0xB:
                     return Bridge.Register.ParameterRegister.E;
                 case 4:
+                case 0xC:
                     return Bridge.Register.ParameterRegister.H;
                 case 5:
+                case 0xD:
                     return Bridge.Register.ParameterRegister.L;
                 case 6:
+                case 0xE:
                     return Bridge.Register.ParameterRegister.HL;
 
                 default:
