@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JADE.UI.WinConsole", "JADE.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JADE.Core.Instructions.Interpreter.UnitTest", "JADE.Core.Instructions.Interpreter.UnitTest\JADE.Core.Instructions.Interpreter.UnitTest.csproj", "{ED903A8D-1788-4A27-B9FF-2D9F5AE6C658}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JADE.Core.UnitTest", "JADE.Core.UnitTest\JADE.Core.UnitTest.csproj", "{5314E329-95CA-4AE9-B63F-9BDA83EF0AF5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +67,10 @@ Global
 		{ED903A8D-1788-4A27-B9FF-2D9F5AE6C658}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED903A8D-1788-4A27-B9FF-2D9F5AE6C658}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED903A8D-1788-4A27-B9FF-2D9F5AE6C658}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5314E329-95CA-4AE9-B63F-9BDA83EF0AF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5314E329-95CA-4AE9-B63F-9BDA83EF0AF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5314E329-95CA-4AE9-B63F-9BDA83EF0AF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5314E329-95CA-4AE9-B63F-9BDA83EF0AF5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -78,6 +84,7 @@ Global
 		{47ED380F-9DB7-4DC7-BC7D-A9F0C59ED0FE} = {79739B74-F17D-4722-99E6-26BEBCF92D46}
 		{30F5C290-3757-4282-807F-880A980EE710} = {71458F3D-B822-460B-A308-08D077D13F08}
 		{ED903A8D-1788-4A27-B9FF-2D9F5AE6C658} = {216AC93E-B9DF-4A85-80F3-5115E720F95A}
+		{5314E329-95CA-4AE9-B63F-9BDA83EF0AF5} = {6C2830B0-EEB4-4B05-8B78-D5346CDC6FDC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A27F2869-DB6C-42F7-B1A7-50BB40978646}
