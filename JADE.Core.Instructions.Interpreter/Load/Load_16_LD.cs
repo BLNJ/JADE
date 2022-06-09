@@ -183,7 +183,7 @@ namespace JADE.Core.Instructions.Interpreter.Load
                 }
                 else
                 {
-                    byte value = (byte)parametersList[1].Value;
+                    byte value = (byte)parametersList[0].Value;
 
                     switch (opCode)
                     {
