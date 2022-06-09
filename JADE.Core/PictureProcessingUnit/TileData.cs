@@ -61,8 +61,8 @@ namespace JADE.Core.PictureProcessingUnit
             bool lower = RawData[y + 1].GetBit(7 - x);
 
             byte color = 0;
-            color.SetBit(0, upper);
-            color.SetBit(1, lower);
+            color = color.SetBit(0, upper);
+            color = color.SetBit(1, lower);
 
             return color;
         }
