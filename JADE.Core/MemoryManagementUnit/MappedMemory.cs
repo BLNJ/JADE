@@ -65,7 +65,7 @@ namespace JADE.Core.MemoryManagementUnit
         {
             this.AddMappedStream(name, start, (ushort)externalStream.Length, externalStream, 0);
         }
-        public void AddMappedStream(MappedMemoryRegion.Name name, ushort start, ushort length, Stream externalStream, long externalBaseAddress)
+        public void AddMappedStream(MappedMemoryRegion.Name name, ushort start, ushort length, Stream externalStream, long externalBaseAddress, bool topMost = false)
         {
             MappedMemoryRegion mappedIO = FindMappedMemory(start);
 
@@ -81,7 +81,7 @@ namespace JADE.Core.MemoryManagementUnit
                 }
 
                 ExternalMemory stream = new ExternalMemory(externalStream, externalBaseAddress, length, writable: externalStream.CanWrite);
-                mappedIO = new MappedMemoryRegion(name, start, length, stream);
+                mappedIO = new MappedMemoryRegion(name, start, length, stream, topMost);
 
                 this.MemoryRegions.Add(mappedIO);
             }

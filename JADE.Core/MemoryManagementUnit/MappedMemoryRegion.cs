@@ -25,11 +25,17 @@ namespace JADE.Core.MemoryManagementUnit
             get;
             private set;
         }
+        public bool TopMost
+        {
+            get;
+            private set;
+        } = false;
         public Name RegionName
         {
             get;
             private set;
         }
+        public int RegionIteration = 0;
 
         public IO.ExternalMemory ExternalMemory
         {
@@ -37,7 +43,7 @@ namespace JADE.Core.MemoryManagementUnit
             private set;
         }
 
-        public MappedMemoryRegion(Name regionName, ushort start, ushort length, IO.ExternalMemory externalMemory)
+        public MappedMemoryRegion(Name regionName, ushort start, ushort length, IO.ExternalMemory externalMemory, bool topMost)
         {
             //TODO add error handling
             this.RegionName = regionName;
@@ -45,6 +51,7 @@ namespace JADE.Core.MemoryManagementUnit
             this.Length = length;
 
             this.ExternalMemory = externalMemory;
+            this.TopMost = topMost;
         }
 
         public void Close()
@@ -54,14 +61,13 @@ namespace JADE.Core.MemoryManagementUnit
 
         public override string ToString()
         {
-            return string.Format("{0}: {1}-{2} ({3})", RegionName, Start, End, Length);
+            return string.Format("{0}:{4}: {1}-{2} ({3})", RegionName, Start, End, Length, RegionIteration);
         }
 
         public enum Name
         {
             Bootstrap,
             CartridgeROM_Bank0,
-            CartridgeHeader,
             CartridgeROM_BankX,
             VRAM,
             CartridgeRAM,

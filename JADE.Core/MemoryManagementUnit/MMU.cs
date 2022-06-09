@@ -68,7 +68,7 @@ namespace JADE.Core.MemoryManagementUnit
             //TODO Move Memory Regions to corresponding devices
 
             //Bootstrap
-            AddMappedStream(MappedMemoryRegion.Name.Bootstrap, 0x0, new MemoryStream(System.IO.File.ReadAllBytes("C:\\Gameboy_Dev\\totallyLegitBootstrap.bin"), false));
+            AddMappedStream(MappedMemoryRegion.Name.Bootstrap, 0x0, new MemoryStream(System.IO.File.ReadAllBytes("C:\\Gameboy_Dev\\totallyLegitBootstrap.bin"), false), topMost: true);
 
             //VRAM
             //AddMappedStream(MemoryManagementUnit.MappedMemory.Name.VRAM, 0x8000, 0x9FFF, random: true);
@@ -104,51 +104,139 @@ namespace JADE.Core.MemoryManagementUnit
         }
         public MappedMemoryRegion FindMappedMemory(ushort position)
         {
-            for (int i = 0; i < this.MappedMemory.Count; i++)
-            {
-                MappedMemoryRegion mappedIO = this.MappedMemory[i];
+            List<MappedMemoryRegion> memoryRegions = this.MappedMemory.FindAll(reg => reg.Start <= position && (reg.End - 1) >= position);
 
-                if (mappedIO.Start <= position)
+            if(memoryRegions.Count == 1)
+            {
+                return memoryRegions[0];
+            }
+            else if(memoryRegions.Count > 1)
+            {
+                MappedMemoryRegion topMostMemoryRegion = null;
+
+                for(int i = 0; i < memoryRegions.Count; i++)
                 {
-                    if (mappedIO.End - 1 >= position)
+                    MappedMemoryRegion mappedIO = memoryRegions[i];
+
+                    if(topMostMemoryRegion == null)
                     {
-                        return mappedIO;
+                        topMostMemoryRegion = mappedIO;
+                    }
+                    else
+                    {
+                        if(!topMostMemoryRegion.TopMost && mappedIO.TopMost)
+                        {
+                            topMostMemoryRegion = mappedIO;
+                            break;
+                        }
+                        else if(topMostMemoryRegion.TopMost && mappedIO.TopMost)
+                        {
+                            throw new Exception("Cant determine TopMost MemoryRegion. More then 1 have been found at " + position.ToString("X2"));
+                        }
+                        else if(topMostMemoryRegion.TopMost && !mappedIO.TopMost)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            if (topMostMemoryRegion.RegionName == mappedIO.RegionName)
+                            {
+                                if (topMostMemoryRegion.RegionIteration < mappedIO.RegionIteration)
+                                {
+                                    topMostMemoryRegion = mappedIO;
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+                            }
+                            else
+                            {
+                                int topMostIndex = this.MappedMemory.IndexOf(topMostMemoryRegion);
+                                int mappedIndex = this.MappedMemory.IndexOf(mappedIO);
+
+                                if (topMostIndex < mappedIndex)
+                                {
+                                    topMostMemoryRegion = mappedIO;
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+                            }
+                        }
                     }
                 }
+
+                return topMostMemoryRegion;
             }
+            
+
+            //for (int i = 0; i < this.MappedMemory.Count; i++)
+            //{
+            //    MappedMemoryRegion mappedIO = this.MappedMemory[i];
+
+            //    if (mappedIO.Start <= position)
+            //    {
+            //        if (mappedIO.End - 1 >= position)
+            //        {
+            //            return mappedIO;
+            //        }
+            //    }
+            //}
 
             return null;
         }
 
-        public void AddMappedStream(MappedMemoryRegion.Name name, ushort start, ushort length, bool random = false)
+        public MappedMemoryRegion AddMappedStream(MappedMemoryRegion.Name name, ushort start, ushort length, bool random = false, bool topMost = false)
         {
             FilledMemoryStream stream = new FilledMemoryStream(length, random);
-            AddMappedStream(name, start, length, stream, 0);
-        }
-        public void AddMappedStream(MappedMemoryRegion.Name name, ushort start, Stream externalStream)
-        {
-            this.AddMappedStream(name, start, (ushort)externalStream.Length, externalStream, 0);
-        }
-        public void AddMappedStream(MappedMemoryRegion.Name name, ushort start, ushort length, Stream externalStream, long externalBaseAddress)
-        {
-            MappedMemoryRegion mappedIO = FindMappedMemory(start);
+            MappedMemoryRegion region = AddMappedStream(name, start, length, stream, 0, topMost: topMost);
 
-            if (mappedIO != null)
-            {
-                throw new Exception(string.Format("mappedIO already existing: start:{0}, end:{1}", start, (start + length)));
-            }
-            else
-            {
-                if (this.MappedMemory.Find(map => map.RegionName == name) != null)
-                {
-                    throw new Exception("Name already exists: " + name);
-                }
+            return region;
+        }
+        public MappedMemoryRegion AddMappedStream(MappedMemoryRegion.Name name, ushort start, Stream externalStream, bool topMost = false)
+        {
+            return this.AddMappedStream(name, start, (ushort)externalStream.Length, externalStream, 0, topMost: topMost);
+        }
+        public MappedMemoryRegion AddMappedStream(MappedMemoryRegion.Name name, ushort start, ushort length, Stream externalStream, long externalBaseAddress, bool topMost = false)
+        {
+            //MappedMemoryRegion mappedIO = FindMappedMemory(start);
+
+            //if (mappedIO != null)
+            //{
+            //    throw new Exception(string.Format("mappedIO already existing: start:{0}, end:{1}", start, (start + length)));
+            //}
+            //else
+            //{
+                //if (this.MappedMemory.Find(map => map.RegionName == name) != null)
+                //{
+                //    throw new Exception("Name already exists: " + name);
+                //}
 
                 ExternalMemory stream = new ExternalMemory(externalStream, externalBaseAddress, length, writable: externalStream.CanWrite);
-                mappedIO = new MappedMemoryRegion(name, start, length, stream);
+                MappedMemoryRegion mappedIO = new MappedMemoryRegion(name, start, length, stream, topMost);
+
+                List<MappedMemoryRegion> foundStreams = this.MappedMemory.FindAll(map => map.RegionName == name);
+                if (foundStreams.Count > 0)
+                {
+                    int nextNumber = 0;
+                    for(int i = 0; i < foundStreams.Count; i++)
+                    {
+                        MappedMemoryRegion mappedStream = foundStreams[i];
+                        if(mappedStream.RegionIteration > nextNumber)
+                        {
+                            nextNumber = mappedStream.RegionIteration;
+                        }
+                    }
+
+                    nextNumber++;
+                    mappedIO.RegionIteration = nextNumber;
+                }
 
                 this.MappedMemory.Add(mappedIO);
-            }
+                return mappedIO;
+            //}
         }
 
         public void RemoveMappedStream(MappedMemoryRegion.Name name)
