@@ -140,9 +140,9 @@ namespace JADE.Core
             this.MMU.RemoveMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.Bootstrap);
 
             //We needed the Header before, but only used a small (0x100 - 0x150) part, so lets unmap the Header...
-            this.MMU.RemoveMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeHeader);
+            //this.MMU.RemoveMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeHeader);
             //...and map it fully
-            this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeHeader, 0x0, 0x150, this.ROM.Stream, 0x0);
+            //this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeHeader, 0x0, 0x150, this.ROM.Stream, 0x0);
         }
 
         public void InsertROM(ReadOnlyMemory.ROM rom)
@@ -152,9 +152,10 @@ namespace JADE.Core
                 this.ROM = rom;
 
                 //0100-014F
-                this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeHeader, 0x100, 0x50, this.ROM.Stream, 0x100);
+                //this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeHeader, 0x100, 0x50, this.ROM.Stream, 0x100);
                 //0150-3FFF
-                this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeROM_Bank0, 0x0150, 0x3EB0, this.ROM.Stream, 0x0150);
+                //this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeROM_Bank0, 0x0150, 0x3EB0, this.ROM.Stream, 0x0150);
+                this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeROM_Bank0, 0x0, 0x3EB0, this.ROM.Stream, 0x0);
 
                 //TODO Debug
                 //4000-7FFF
