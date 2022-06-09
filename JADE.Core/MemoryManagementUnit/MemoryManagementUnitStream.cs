@@ -81,9 +81,9 @@ namespace JADE.Core.MemoryManagementUnit
         {
             return ReadUShort(this.Position);
         }
-        public ushort ReadUShort(long offset)
+        public ushort ReadUShort(long offset, bool jumpBack = false)
         {
-            byte[] buffer = ReadBytes(offset, 2);
+            byte[] buffer = ReadBytes(offset, 2, jumpBack: jumpBack);
             ushort value = BitConverter.ToUInt16(buffer, 0);
             return value;
         }
@@ -91,9 +91,9 @@ namespace JADE.Core.MemoryManagementUnit
         {
             return ReadShort(this.Position);
         }
-        public short ReadShort(long offset)
+        public short ReadShort(long offset, bool jumpBack = false)
         {
-            byte[] buffer = ReadBytes(offset, 2);
+            byte[] buffer = ReadBytes(offset, 2, jumpBack: jumpBack);
             short value = BitConverter.ToInt16(buffer, 0);
             return value;
         }
@@ -101,12 +101,19 @@ namespace JADE.Core.MemoryManagementUnit
         {
             return ReadBytes(this.Position, count);
         }
-        public byte[] ReadBytes(long offset, int count)
+        public byte[] ReadBytes(long offset, int count, bool jumpBack = false)
         {
+            long oldPosition = this.Position;
+
             byte[] buffer = new byte[count];
             for (int i = 0; i < count; i++)
             {
                 buffer[i] = ReadByte(offset + i);
+            }
+
+            if(jumpBack)
+            {
+                this.Position = oldPosition;
             }
 
             return buffer;
@@ -115,9 +122,9 @@ namespace JADE.Core.MemoryManagementUnit
         {
             return ReadSByte(this.Position);
         }
-        public sbyte ReadSByte(long offset)
+        public sbyte ReadSByte(long offset, bool jumpBack = false)
         {
-            byte buffer = ReadByte(offset);
+            byte buffer = ReadByte(offset, jumpBack);
             sbyte converted = (sbyte)buffer;
 
             //if (buffer > sbyte.MaxValue)
@@ -136,15 +143,22 @@ namespace JADE.Core.MemoryManagementUnit
         {
             return ReadByte(this.Position);
         }
-        public byte ReadByte(long offset)
+        public byte ReadByte(long offset, bool jumpBack = false)
         {
             byte[] buffer = new byte[1];
 
             int ret;
             lock (locker)
             {
+                long oldPosition = this.Position;
+
                 this.Position = offset;
                 ret = Read(buffer, 0, 1);
+
+                if(jumpBack)
+                {
+                    this.Position = oldPosition;
+                }
             }
 
             if (ret != 1)
@@ -208,39 +222,53 @@ namespace JADE.Core.MemoryManagementUnit
         {
             this.WriteUShort(this.Position, value);
         }
-        public void WriteUShort(long offset, ushort value)
+        public void WriteUShort(long offset, ushort value, bool jumpBack = false)
         {
             byte[] buffer = BitConverter.GetBytes(value);
-            this.WriteBytes(offset, buffer);
+            this.WriteBytes(offset, buffer, jumpBack: jumpBack);
         }
         public void WriteShort(short value)
         {
             this.WriteShort(this.Position, value);
         }
-        public void WriteShort(long offset, short value)
+        public void WriteShort(long offset, short value, bool jumpBack = false)
         {
             byte[] buffer = BitConverter.GetBytes(value);
-            this.WriteBytes(offset, buffer);
+            this.WriteBytes(offset, buffer, jumpBack: jumpBack);
         }
         public void WriteBytes(byte[] value)
         {
             this.WriteBytes(this.Position, value);
         }
-        public void WriteBytes(long offset, byte[] value)
+        public void WriteBytes(long offset, byte[] value, bool jumpBack = false)
         {
+            long oldPosition = this.Position;
+
             for (int i = 0; i < value.Length; i++)
             {
                 this.WriteByte(offset + i, value[i]);
+            }
+
+            if(jumpBack)
+            {
+                this.Position = oldPosition;
             }
         }
         public new void WriteByte(byte value)
         {
             this.WriteByte(this.Position, value);
         }
-        public void WriteByte(long offset, byte value)
+        public void WriteByte(long offset, byte value, bool jumpBack = false)
         {
+            long oldPosition = this.Position;
+
             this.Position = offset;
             this.Write(new byte[] { value }, 0, 1);
+
+            if(jumpBack)
+            {
+                this.Position = oldPosition;
+            }
         }
         public void Write(object value)
         {
