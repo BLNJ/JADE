@@ -24,7 +24,7 @@ namespace JADE.Core.PictureProcessingUnit
         {
             get
             {
-                return mmu.Stream.ReadBytes(BaseAddress, 16);
+                return mmu.Stream.ReadBytes(BaseAddress, 16, jumpBack: true);
             }
         }
 

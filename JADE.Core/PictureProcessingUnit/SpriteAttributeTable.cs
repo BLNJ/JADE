@@ -36,8 +36,10 @@ namespace JADE.Core.PictureProcessingUnit
         {
             byte[] buffer = new byte[1];
 
+            long oldPosition = OAMMemory.Position;
             OAMMemory.Position = ((index * 4) + offset);
             int count = OAMMemory.Read(buffer, 0, 1);
+            OAMMemory.Position = oldPosition;
             if (count == 1)
             {
                 return buffer[0];
@@ -49,8 +51,10 @@ namespace JADE.Core.PictureProcessingUnit
         }
         internal void WriteOAMByte(int index, int offset, byte value)
         {
+            long oldPosition = OAMMemory.Position;
             OAMMemory.Position = ((index * 4) + offset);
             OAMMemory.Write(new byte[] { value }, 0, 1);
+            OAMMemory.Position = oldPosition;
         }
     }
 }

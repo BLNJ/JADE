@@ -25,11 +25,11 @@ namespace JADE.Core.PictureProcessingUnit
         {
             get
             {
-                return this.mmu.Stream.ReadByte(this.baseAddress);
+                return this.mmu.Stream.ReadByte(this.baseAddress, jumpBack: true);
             }
             set
             {
-                this.mmu.Stream.WriteByte(this.baseAddress, value);
+                this.mmu.Stream.WriteByte(this.baseAddress, value, jumpBack: true);
             }
         }
 
