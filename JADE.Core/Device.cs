@@ -155,7 +155,7 @@ namespace JADE.Core
                 //this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeHeader, 0x100, 0x50, this.ROM.Stream, 0x100);
                 //0150-3FFF
                 //this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeROM_Bank0, 0x0150, 0x3EB0, this.ROM.Stream, 0x0150);
-                this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeROM_Bank0, 0x0, 0x3EB0, this.ROM.Stream, 0x0);
+                this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeROM_Bank0, 0x0, 0x4000, this.ROM.Stream, 0x0);
 
                 //TODO Debug
                 //4000-7FFF
