@@ -104,14 +104,14 @@ namespace JADE.IO
                 int ret = 0;
                 while (ret < count)
                 {
-                    if (Position >= Length)
+                    if (this.Position >= Length)
                     {
                         throw new EndOfStreamException();
                     }
                     else
                     {
                         ret += baseStream.Read(buffer, offset + ret, 1);
-                        Position++;
+                        //this.Position++;
                     }
                 }
 
@@ -147,14 +147,14 @@ namespace JADE.IO
                     int rem = 0;
                     while (rem < count)
                     {
-                        if (Position >= Length)
+                        if (this.Position >= Length)
                         {
                             throw new EndOfStreamException();
                         }
                         else
                         {
                             baseStream.Write(buffer, offset + rem, 1);
-                            Position++;
+                            //this.Position++;
                             rem++;
                         }
                     }
@@ -172,7 +172,7 @@ namespace JADE.IO
                     newOffset = (0 + offset);
                     break;
                 case SeekOrigin.Current:
-                    newOffset = (Position + offset);
+                    newOffset = (this.Position + offset);
                     break;
                 case SeekOrigin.End:
                     newOffset = (Length - offset);
