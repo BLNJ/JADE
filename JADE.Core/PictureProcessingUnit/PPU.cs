@@ -128,6 +128,8 @@ namespace JADE.Core.PictureProcessingUnit
 
         public void Step()
         {
+
+
             //var range = this.LCDControlRegisters.BGTileMapDisplaySelect;
             //for (int y = 0; y < bitmap.Height; y++)
             //{
@@ -179,53 +181,44 @@ namespace JADE.Core.PictureProcessingUnit
             }
         }
 
-        private void UpdateBackground()
+        public void ParseTileMaps()
         {
-
+            ParseTileMap(this.LCDControlRegisters.BackgroundTileMapRegion);
+            ParseTileMap(this.LCDControlRegisters.WindowTileTable);
         }
 
-        public void DumpVRAM()
+        private void ParseTileMap(Registers.LCDControlRegisters.MemoryRegion region)
         {
-            byte[] buffer = this.VRAM.ToArray();
-            File.WriteAllBytes(@"D:\Development\GameBoy_Emulator\Files\Debugging\vram.bin", buffer);
-        }
+            ushort currentAddress = 0x8000;
 
-        public void DumpBackgroundTileMap()
-        {
-            int length = (this.LCDControlRegisters.BackgroundTileMapRegion.End - this.LCDControlRegisters.BackgroundTileMapRegion.Start);
-            byte[] buffer = new byte[length];
-
-            buffer = this.device.MMU.Stream.ReadBytes(this.LCDControlRegisters.BackgroundTileMapRegion.Start, length);
-            File.WriteAllBytes(@"D:\Development\GameBoy_Emulator\Files\Debugging\backgroundTileMap.bin", buffer);
-        }
-
-        public Bitmap GenerateBackground()
-        {
-            var range = this.LCDControlRegisters.BackgroundTileMapRegion;
-            for (int y = 0; y < backgroundBuffer.Height; y++)
+            List<TileData> tileDatas = new List<TileData>();
+            for (int i = 0; i < (0x180); i++)
             {
-                for (int x = 0; x < backgroundBuffer.Width; x++)
+                TileData tileData = new TileData(this, currentAddress);
+                tileDatas.Add(tileData);
+                currentAddress += 16;
+            }
+
+            Bitmap bitmap = new Bitmap(256, 256);
+
+            this.device.MMU.Stream.Position = region.Start;
+
+
+            for (int y = 0; y < 32; y++)
+            {
+                for (int x = 0; x < 32; x++)
                 {
-                    int tileX = x / 8;
-                    int tileY = y / 8;
+                    byte indexValue = this.device.MMU.Stream.ReadByte();
 
-                    int tilePixelX = x - (tileX * 8);
-                    int tilePixelY = y - (tileY * 8);
+                    TileData tileData = tileDatas[indexValue];
+                    Bitmap tileBitmap = tileData.GetTile();
 
-                    TileData tileData = new TileData(this, (ushort)(range.Start + (x + y)));
-                    Color pixel = tileData.GetPixelColor(tilePixelX, tilePixelY);
-                    backgroundBuffer.SetPixel(x, y, pixel);
+                    Graphics graphics = Graphics.FromImage(bitmap);
+                    graphics.DrawImage(tileBitmap, (x * tileBitmap.Width), (y * tileBitmap.Height));
                 }
             }
 
-            return backgroundBuffer;
-        }
-
-        public void SaveBackground()
-        {
-            Bitmap bitmap = GenerateBackground();
-
-            bitmap.Save(@"D:\Development\GameBoy_Emulator\Files\test.png", System.Drawing.Imaging.ImageFormat.Png);
+            bitmap.Save(string.Format(@".\tilemap\tilemap_{0}.png", region.Start), System.Drawing.Imaging.ImageFormat.Png);
         }
 
         protected virtual void OnPictureDrawn(Bitmap image)
