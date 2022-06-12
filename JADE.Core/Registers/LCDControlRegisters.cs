@@ -143,8 +143,7 @@ namespace JADE.Core.Registers
         {
             get
             {
-                bool value = this.lcd_control.GetBit(2);
-                if(value)
+                if(this.IsHighSpritesMode)
                 {
                     return 16;
                 }
@@ -157,16 +156,28 @@ namespace JADE.Core.Registers
             {
                 if(value == 16)
                 {
-                    this.lcd_control = this.lcd_control.SetBit(2, true);
+                    this.IsHighSpritesMode = true;
                 }
                 else if(value == 8)
                 {
-                    this.lcd_control = this.lcd_control.SetBit(2, false);
+                    this.IsHighSpritesMode = false;
                 }
                 else
                 {
                     throw new Exception(string.Format("Unknown Heigth: {0}", value));
                 }
+            }
+        }
+        public bool IsHighSpritesMode
+        {
+            get
+            {
+                bool value = this.lcd_control.GetBit(2);
+                return value;
+            }
+            set
+            {
+                this.lcd_control = this.lcd_control.SetBit(2, value);
             }
         }
         public bool SpriteDisplayEnable

@@ -55,7 +55,7 @@ namespace JADE.Core.MemoryManagementUnit
             this.Stream = new MemoryManagementUnitStream(this, 0x10000);
         }
 
-        public void Reset()
+        public void Reset(bool loadBootloader = false)
         {
             for (int i = 0; i < this.MappedMemory.Count; i++)
             {
@@ -68,7 +68,10 @@ namespace JADE.Core.MemoryManagementUnit
             //TODO Move Memory Regions to corresponding devices
 
             //Bootstrap
-            AddMappedStream(MappedMemoryRegion.Name.Bootstrap, 0x0, new MemoryStream(System.IO.File.ReadAllBytes("C:\\Gameboy_Dev\\totallyLegitBootstrap.bin"), false), topMost: true);
+            if (loadBootloader)
+            {
+                AddMappedStream(MappedMemoryRegion.Name.Bootstrap, 0x0, new MemoryStream(System.IO.File.ReadAllBytes("C:\\Gameboy_Dev\\totallyLegitBootstrap.bin"), false), topMost: true);
+            }
 
             //VRAM
             //AddMappedStream(MemoryManagementUnit.MappedMemory.Name.VRAM, 0x8000, 0x9FFF, random: true);
@@ -261,7 +264,7 @@ namespace JADE.Core.MemoryManagementUnit
 
         public void DumpMMU()
         {
-            using (FileStream fs = File.Create(@"D:\Development\GameBoy_Emulator\Files\Debugging\mmu.bin"))
+            using (FileStream fs = File.Create(@".\mmu.bin"))
             {
                 fs.Position = 0x0;
                 for (int i = 0; i < this.Stream.Length; i++)

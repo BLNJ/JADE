@@ -127,6 +127,22 @@ namespace JADE.Core.PictureProcessingUnit
             }
         }
 
+        public byte Width
+        {
+            get
+            {
+                return this.spriteAttributeTable.ppu.LCDControlRegisters.SpriteSize_Width;
+            }
+        }
+
+        public byte Height
+        {
+            get
+            {
+                return this.spriteAttributeTable.ppu.LCDControlRegisters.SpriteSize_Heigth;
+            }
+        }
+
         public ColorPalette ColorPalette
         {
             get
@@ -156,10 +172,49 @@ namespace JADE.Core.PictureProcessingUnit
             }
         }
 
+        Bitmap cacheBitmap;
+
         public OAMEntry(SpriteAttributeTable spriteAttributeTable, int index)
         {
             this.spriteAttributeTable = spriteAttributeTable;
             this.Index = index;
+        }
+
+        public Bitmap Draw()
+        {
+            if(this.cacheBitmap == null || this.cacheBitmap.Height != this.Height)
+            {
+                if(this.cacheBitmap != null)
+                {
+                    this.cacheBitmap.Dispose();
+                    this.cacheBitmap = null;
+                }
+
+                this.cacheBitmap = new Bitmap(this.Width, this.Height);
+            }
+
+            using (Graphics graphics = Graphics.FromImage(this.cacheBitmap))
+            {
+                if(this.spriteAttributeTable.ppu.LCDControlRegisters.IsHighSpritesMode)
+                {
+                    byte bottomIndex = (byte)(this.Index | 1);
+                    byte upperIndex = (byte)(this.Index & -2);
+
+                    Bitmap bottom = this.spriteAttributeTable.ppu.OBJTileTable.GetTileDataByIndex(bottomIndex).GenerateBitmap();
+                    Bitmap upper = this.spriteAttributeTable.ppu.OBJTileTable.GetTileDataByIndex(upperIndex).GenerateBitmap();
+
+                    graphics.DrawImage(upper, 0, 0);
+                    graphics.DrawImage(bottom, 8, 0);
+                }
+                else
+                {
+                    Bitmap tile = this.spriteAttributeTable.ppu.OBJTileTable.GetTileDataByIndex(this.Index).GenerateBitmap();
+                    graphics.DrawImage(tile, 0, 0);
+
+                }
+            }
+
+            return this.cacheBitmap;
         }
 
         public enum Palette

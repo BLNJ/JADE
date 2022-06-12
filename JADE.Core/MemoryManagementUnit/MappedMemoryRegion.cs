@@ -37,7 +37,8 @@ namespace JADE.Core.MemoryManagementUnit
         }
         public int RegionIteration = 0;
 
-        public IO.ExternalMemory ExternalMemory
+        //public IO.ExternalMemory ExternalMemory
+        public System.IO.Stream ExternalMemory
         {
             get;
             private set;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Drawing;
 
 namespace JADE.Core.PictureProcessingUnit
 {
@@ -30,6 +31,13 @@ namespace JADE.Core.PictureProcessingUnit
             {
                 SpriteAttributes.Add(new OAMEntry(this, i));
             }
+        }
+
+        public Bitmap DrawOAMTable()
+        {
+
+            //Bitmap bitmap = new Bitmap();
+            return null;
         }
 
         internal byte ReadOAMByte(int index, int offset)

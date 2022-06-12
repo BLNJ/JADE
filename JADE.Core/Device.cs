@@ -57,6 +57,9 @@ namespace JADE.Core
             }
         }
 
+        public delegate void Tick(object sender);
+        public event Tick DebugTick;
+
         public Device()
         {
             this.MMU = new MemoryManagementUnit.MMU(this);
@@ -72,21 +75,11 @@ namespace JADE.Core
         {
             this.Status = "Running";
 
-            //Thread testThread = new Thread(testLoop);
-            //testThread.Name = "testLoop";
-            //testThread.Start();
+            Thread testThread = new Thread(testLoop);
+            testThread.Name = "testLoop";
+            testThread.Start();
 
-            //TODO proper loop
-            //System.Threading.Thread cpuThread = new System.Threading.Thread(CPULoop);
-            //cpuThread.Name = "cpuThread";
-
-            //System.Threading.Thread gpuThread = new System.Threading.Thread(GPULoop);
-            //gpuThread.Name = "gpuThread";
-
-            //cpuThread.Start();
-            //gpuThread.Start();
-
-            testLoop();
+            //testLoop();
         }
 
         public void Pause()
@@ -94,9 +87,9 @@ namespace JADE.Core
             throw new NotImplementedException();
         }
 
-        public void Reset()
+        public void Reset(bool loadBootloader = false)
         {
-            this.MMU.Reset();
+            this.MMU.Reset(loadBootloader: loadBootloader);
             this.MappedIO = new TriggerStream(new FilledMemoryStream(0x80, random: false));
             this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.IO, 0xFF00, 0x80, this.MappedIO, 0);
 
@@ -147,7 +140,9 @@ namespace JADE.Core
                 //this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeHeader, 0x100, 0x50, this.ROM.Stream, 0x100);
                 //0150-3FFF
                 //this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeROM_Bank0, 0x0150, 0x3EB0, this.ROM.Stream, 0x0150);
-                this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeROM_Bank0, 0x0, 0x4000, this.ROM.Stream, 0x0);
+
+                //this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeROM_Bank0, 0x0, 0x4000, this.ROM.Stream, 0x0);
+                this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.CartridgeROM_Bank0, 0x0, 0x4000, new ReadOnlyMemory.Streams.Bank0Stream(this.ROM.Stream), 0x0);
 
                 //TODO Debug
                 //4000-7FFF
@@ -169,6 +164,15 @@ namespace JADE.Core
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        protected virtual void OnDebugTick()
+        {
+            Tick handler = this.DebugTick;
+            if(handler != null)
+            {
+                handler(this);
             }
         }
     }

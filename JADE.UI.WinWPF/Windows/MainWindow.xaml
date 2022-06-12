@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:JADE.UI.WinWPF.Windows"
         xmlns:Core="clr-namespace:JADE.Core;assembly=JADE.Core" x:Class="JADE.UI.WinWPF.Windows.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="517" Width="905">
+        Title="MainWindow" Height="651" Width="905">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Window.Resources>
@@ -54,7 +54,7 @@
             </UniformGrid>
         </GroupBox>
 
-        <GroupBox Header="CPU Interrupts" Margin="471,11,294,200" Width="140" DataContext="{Binding CPU, Mode=OneWay}">
+        <GroupBox Header="CPU Interrupts" Width="140" Height="291" DataContext="{Binding CPU, Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Top">
             <UniformGrid Columns="1">
                 <CheckBox Grid.Column="0" Content="Master" IsChecked="{Binding InterruptMasterEnable, Mode=OneWay}" IsHitTestVisible="False" VerticalAlignment="Center"/>
 
@@ -78,8 +78,20 @@
             </UniformGrid>
         </GroupBox>
 
-        <Border BorderThickness="1" BorderBrush="Black" VerticalAlignment="Top" Margin="206,173,435,0" Height="256" Width="256">
-            <Image x:Name="imgRender"/>
-        </Border>
+        <GroupBox Header="TileData" Width="268" Height="279" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+            <Border BorderThickness="1" BorderBrush="Black" Height="256" Width="256">
+                <Image x:Name="imgTileData"/>
+            </Border>
+        </GroupBox>
+        <GroupBox Header="Background" Width="268" Height="279" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="268,0,0,0">
+            <Border BorderThickness="1" BorderBrush="Black" Height="256" Width="256">
+                <Image x:Name="imgBackground"/>
+            </Border>
+        </GroupBox>
+        <GroupBox Header="Window" Width="268" Height="279" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="536,0,0,0">
+            <Border BorderThickness="1" BorderBrush="Black" Height="256" Width="256">
+                <Image x:Name="imgWindow"/>
+            </Border>
+        </GroupBox>
     </Grid>
 </Window>

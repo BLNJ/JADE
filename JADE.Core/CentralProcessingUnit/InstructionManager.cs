@@ -264,51 +264,56 @@ namespace JADE.Core.CentralProcessingUnit
 
                     long address = change.Address;
 
+                    long realAddress;
+
                     switch(change.BaseAddressRegister)
                     {
                         case Instructions.Bridge.Register.ParameterRegister.A:
-                            this.cpu.MMU.Stream.Write(this.cpu.Registers.A + change.Address, change.Value);
+                            realAddress = (this.cpu.Registers.A + change.Address);
                             break;
                         case Instructions.Bridge.Register.ParameterRegister.F:
-                            this.cpu.MMU.Stream.Write(this.cpu.Registers.F + change.Address, change.Value);
+                            realAddress = (this.cpu.Registers.F + change.Address);
                             break;
                         case Instructions.Bridge.Register.ParameterRegister.AF:
-                            this.cpu.MMU.Stream.Write(this.cpu.Registers.AF + change.Address, change.Value);
+                            realAddress = (this.cpu.Registers.AF + change.Address);
                             break;
 
                         case Instructions.Bridge.Register.ParameterRegister.B:
+                            realAddress = (this.cpu.Registers.B + change.Address);
                             this.cpu.MMU.Stream.Write(this.cpu.Registers.B + change.Address, change.Value);
                             break;
                         case Instructions.Bridge.Register.ParameterRegister.C:
-                            this.cpu.MMU.Stream.Write(this.cpu.Registers.C + change.Address, change.Value);
+                            realAddress = (this.cpu.Registers.C + change.Address);
                             break;
                         case Instructions.Bridge.Register.ParameterRegister.BC:
-                            this.cpu.MMU.Stream.Write(this.cpu.Registers.BC + change.Address, change.Value);
+                            realAddress = (this.cpu.Registers.BC + change.Address);
                             break;
 
                         case Instructions.Bridge.Register.ParameterRegister.D:
-                            this.cpu.MMU.Stream.Write(this.cpu.Registers.D + change.Address, change.Value);
+                            realAddress = (this.cpu.Registers.D + change.Address);
                             break;
                         case Instructions.Bridge.Register.ParameterRegister.E:
-                            this.cpu.MMU.Stream.Write(this.cpu.Registers.E + change.Address, change.Value);
+                            realAddress = (this.cpu.Registers.E + change.Address);
                             break;
                         case Instructions.Bridge.Register.ParameterRegister.DE:
-                            this.cpu.MMU.Stream.Write(this.cpu.Registers.DE + change.Address, change.Value);
+                            realAddress = (this.cpu.Registers.DE + change.Address);
                             break;
 
                         case Instructions.Bridge.Register.ParameterRegister.H:
-                            this.cpu.MMU.Stream.Write(this.cpu.Registers.H + change.Address, change.Value);
+                            realAddress = (this.cpu.Registers.H + change.Address);
                             break;
                         case Instructions.Bridge.Register.ParameterRegister.L:
-                            this.cpu.MMU.Stream.Write(this.cpu.Registers.L + change.Address, change.Value);
+                            realAddress = (this.cpu.Registers.L + change.Address);
                             break;
                         case Instructions.Bridge.Register.ParameterRegister.HL:
-                            this.cpu.MMU.Stream.Write(this.cpu.Registers.HL + change.Address, change.Value);
+                            realAddress = (this.cpu.Registers.HL + change.Address);
                             break;
 
                         default:
                             throw new NotImplementedException();
                     }
+
+                    this.cpu.MMU.Stream.Write(realAddress, change.Value);
                 }
                 else if (changeType == typeof(Instructions.Bridge.Stack.StackInstructionParameterResponse))
                 {

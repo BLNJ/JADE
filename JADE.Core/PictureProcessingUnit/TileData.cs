@@ -10,6 +10,9 @@ namespace JADE.Core.PictureProcessingUnit
 {
     public class TileData
     {
+        public const byte SizeX = 8;
+        public const byte SizeY = 8;
+
         PPU ppu;
         MemoryManagementUnit.MMU mmu
         {
@@ -19,19 +22,33 @@ namespace JADE.Core.PictureProcessingUnit
             }
         }
 
-        public ushort BaseAddress;
+        Bitmap cacheBitmap;
+
+        public int Index
+        {
+            get;
+            private set;
+        }
+        public ushort Address
+        {
+            get
+            {
+                return (ushort)(0x8000 + (this.Index * 16));
+            }
+        }
+
         private byte[] RawData
         {
             get
             {
-                return mmu.Stream.ReadBytes(BaseAddress, 16, jumpBack: true);
+                return mmu.Stream.ReadBytes(Address, 16, jumpBack: true);
             }
         }
 
-        public TileData(PPU ppu, ushort baseAddress)
+        public TileData(PPU ppu, int index)
         {
             this.ppu = ppu;
-            this.BaseAddress = baseAddress;
+            this.Index = index;
         }
 
         public Color GetPixelColor(int x, int y)
@@ -57,8 +74,10 @@ namespace JADE.Core.PictureProcessingUnit
 
         public byte GetColorData(int x, int y)
         {
-            bool upper = RawData[y].GetBit(7 - x);
-            bool lower = RawData[y + 1].GetBit(7 - x);
+            byte[] lineData = GetLineData(y);
+
+            bool upper = lineData[0].GetBit(7 - x);
+            bool lower = lineData[1].GetBit(7 - x);
 
             byte color = 0;
             color = color.SetBit(0, upper);
@@ -67,19 +86,48 @@ namespace JADE.Core.PictureProcessingUnit
             return color;
         }
 
-        public Bitmap GetTile()
+        public byte[] GetLineData(int line)
         {
-            Bitmap bitmap = new Bitmap(8, 8);
-            for (int y = 0; y < bitmap.Height; y++)
+            byte[] data = new byte[2];
+            data[0] = this.RawData[(line * 2)];
+            data[1] = this.RawData[(line * 2) + 1];
+
+            return data;
+        }
+
+        public Bitmap GenerateBitmap()
+        {
+            if(this.cacheBitmap == null)
             {
-                for (int x = 0; x < bitmap.Width; x++)
+                this.cacheBitmap = new Bitmap(SizeX, SizeY);
+            }
+            
+            for (int y = 0; y < this.cacheBitmap.Height; y++)
+            {
+                for (int x = 0; x < this.cacheBitmap.Width; x++)
                 {
                     Color pixelColor = GetPixelColor(x, y);
-                    bitmap.SetPixel(x, y, pixelColor);
+                    this.cacheBitmap.SetPixel(x, y, pixelColor);
                 }
             }
 
-            return bitmap;
+            return this.cacheBitmap;
+        }
+
+        public Color[][] GenerateColorMap()
+        {
+            Color[][] data = new Color[8][];
+            for(int y = 0; y < data.Length; y++)
+            {
+                data[y] = new Color[8];
+                for(int x = 0; x < data[y].Length; x++)
+                {
+                    Color pixelColor = GetPixelColor(x, y);
+                    data[y][x] = pixelColor;
+                }
+            }
+
+            return data;
         }
     }
 }

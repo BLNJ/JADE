@@ -15,9 +15,6 @@ namespace JADE.Core.PictureProcessingUnit
 
         internal Device device;
 
-        Bitmap backgroundBuffer;
-        Bitmap outputBuffer;
-
         public delegate void PPUDraw(object sender, Bitmap image);
         public event PPUDraw PictureDrawn;
 
@@ -92,8 +89,20 @@ namespace JADE.Core.PictureProcessingUnit
             private set;
         }
 
+        internal TileData[] tileData;
+        private SpriteAttributeTable spriteAttributeTable;
+
+        private Bitmap backgroundBitmap;
+        private Bitmap windowBitmap;
+
         internal MemoryStream VRAM;
+        MemoryManagementUnit.MappedMemoryRegion VRAMRegion;
         internal MemoryStream OAM;
+        MemoryManagementUnit.MappedMemoryRegion OAMRegion;
+
+        public TileTable OBJTileTable;
+        public TileTable NotOBJTileTable;
+        public TileTable EverythingTileTable;
 
         public PPU(Device device)
         {
@@ -102,6 +111,10 @@ namespace JADE.Core.PictureProcessingUnit
             this.LCDStatusRegisters = new Registers.LCDStatusRegisters(this.device.MMU);
             this.LCDPosition = new Registers.LCDPositionScrolling(this.device.MMU);
 
+            this.OBJTileTable = new TileTable(this, TileTable.Purpose.OBJ);
+            this.NotOBJTileTable = new TileTable(this, TileTable.Purpose.LiterallyEverythingElse);
+            this.EverythingTileTable = new TileTable(this, TileTable.Purpose.All);
+
             this.BGPaletteData = new ColorPalette(this, 0xFF47, lowestTransparent: false);
             this.ObjectPaletteData0 = new ColorPalette(this, 0xFF48);
             this.ObjectPaletteData1 = new ColorPalette(this, 0xFF49);
@@ -109,116 +122,170 @@ namespace JADE.Core.PictureProcessingUnit
 
         public void Reset()
         {
-            backgroundBuffer = new Bitmap(256, 256);
-            outputBuffer = new Bitmap(LCDWidth, LCDHeight);
+            this.tileData = new TileData[384];
+            for (int i = 0; i < this.tileData.Length; i++)
+            {
+                this.tileData[i] = new TileData(this, i);
+            }
+
+            this.spriteAttributeTable = new SpriteAttributeTable(this);
 
             //VRAM
             this.VRAM = new IO.FilledMemoryStream(0x2000, random: false); //TODO for dev purposes random is set to OFF (the bootstrap takes too long for the loop)
-            this.device.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.VRAM, 0x8000, this.VRAM);
+            VRAMRegion = this.device.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.VRAM, 0x8000, this.VRAM);
 
             //OAM
             this.OAM = new IO.FilledMemoryStream(0xA0, random: false);
-            this.device.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.OAM, 0xFE00, this.OAM);
+            OAMRegion = this.device.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.OAM, 0xFE00, this.OAM);
 
             this.LCDControlRegisters.Reset();
             this.LCDStatusRegisters.Reset();
 
+            //TODO this is temporary for Debugging
+            this.LCDControlRegisters.LCDEnabled = false;
+
             this.CurrentScanline = 0;
+            this.cycleProgress = 0;
         }
 
-        public void Step()
+        int cycleProgress = 0;
+        public void Cycle()
         {
-
-
-            //var range = this.LCDControlRegisters.BGTileMapDisplaySelect;
-            //for (int y = 0; y < bitmap.Height; y++)
-            //{
-            //    for (int x = 0; x < bitmap.Width; x++)
-            //    {
-            //        //bitmap.SetPixel(x, (bitmap.Height - 1) - y, Color.White);
-
-            //        if (this.LCDControlRegisters.BackgroundDisplay)
-            //        {
-            //            int xScroll = this.LCDPosition.ScrollX + x;
-            //            int yScroll = this.LCDPosition.ScrollY + y;
-
-            //            if (xScroll > 256)
-            //            {
-            //                xScroll -= 256;
-            //            }
-            //            if (yScroll > 256)
-            //            {
-            //                yScroll -= 256;
-            //            }
-            //        }
-            //        if (this.LCDControlRegisters.SpriteDisplayEnable)
-            //        {
-
-            //        }
-            //    }
-
-            //    //H-Blank
-            //    this.LCDStatusRegisters.Mode = Registers.LCDStatusRegisters.ModeFlag.HBlank;
-            //}
-
-            //OnPictureDrawn(bitmap);
-            ////V-Blank
-            //this.LCDStatusRegisters.Mode = Registers.LCDStatusRegisters.ModeFlag.VBlank;
-
-
             //Viewport?
 
             if (LCDControlRegisters.LCDEnabled)
             {
-                if (LCDControlRegisters.BackgroundDisplay)
+                switch (this.LCDStatusRegisters.Mode)
                 {
-                    //var range = this.LCDControlRegisters.BackgroundTileMapRegion;
-                    //byte[] backgroundTileMap = this.device.MMU.Stream.ReadBytes(range.Start, (range.End - range.Start));
-                    //byte[] test = this.device.MMU.Stream.ReadBytes(0x8000, 0x2000);
+                    case Registers.LCDStatusRegisters.ModeFlag.SearchingOAM:
+                        if(cycleProgress < 80)
+                        {
+                            cycleProgress++;
+                            return;
+                        }
+                        else
+                        {
+                            cycleProgress = 0;
+                            this.LCDStatusRegisters.Mode = Registers.LCDStatusRegisters.ModeFlag.TransferingData;
+                        }
+                        break;
+                    case Registers.LCDStatusRegisters.ModeFlag.TransferingData:
+                        if(cycleProgress < 289)
+                        {
+                            cycleProgress++;
+                        }
+                        else
+                        {
+                            this.OnPictureDrawn(null);
+                            cycleProgress = 0;
+                            this.LCDStatusRegisters.Mode = Registers.LCDStatusRegisters.ModeFlag.HBlank;
+                        }
+                        break;
+                    case Registers.LCDStatusRegisters.ModeFlag.HBlank:
+                        if(cycleProgress < 87)
+                        {
+                            cycleProgress++;
+                        }
+                        else
+                        {
+                            cycleProgress = 0;
+                            this.LCDStatusRegisters.Mode = Registers.LCDStatusRegisters.ModeFlag.VBlank;
+                        }
+                        break;
+                    case Registers.LCDStatusRegisters.ModeFlag.VBlank:
+                        if(cycleProgress < 4560)
+                        {
+                            cycleProgress++;
+                        }
+                        else
+                        {
+                            cycleProgress = 0;
+                            this.LCDStatusRegisters.Mode = Registers.LCDStatusRegisters.ModeFlag.SearchingOAM;
+                        }
+                        break;
+
+
+                    default:
+                        throw new NotImplementedException("Unimplemented PPU Mode: " + this.LCDStatusRegisters.Mode);
                 }
 
-                //OnPictureDrawn(GenerateBackground());
+                if (LCDControlRegisters.BackgroundDisplay)
+                {
+                }
             }
         }
 
-        public void ParseTileMaps()
+        public Bitmap DrawBackground()
         {
-            ParseTileMap(this.LCDControlRegisters.BackgroundTileMapRegion);
-            ParseTileMap(this.LCDControlRegisters.WindowTileTable);
+            return DrawTileMap(this.LCDControlRegisters.BackgroundTileMapRegion);
         }
 
-        private void ParseTileMap(Registers.LCDControlRegisters.MemoryRegion region)
+        public Bitmap DrawWindow()
         {
-            ushort currentAddress = 0x8000;
+            return DrawTileMap(this.LCDControlRegisters.WindowTileTable);
+        }
 
-            List<TileData> tileDatas = new List<TileData>();
-            for (int i = 0; i < (0x180); i++)
-            {
-                TileData tileData = new TileData(this, currentAddress);
-                tileDatas.Add(tileData);
-                currentAddress += 16;
-            }
-
+        public Bitmap DrawTileMap(Registers.LCDControlRegisters.MemoryRegion region)
+        {
             Bitmap bitmap = new Bitmap(256, 256);
+            Graphics graphics = Graphics.FromImage(bitmap);
 
-            this.device.MMU.Stream.Position = region.Start;
-
-
+            long position = region.Start;
             for (int y = 0; y < 32; y++)
             {
                 for (int x = 0; x < 32; x++)
                 {
-                    byte indexValue = this.device.MMU.Stream.ReadByte();
+                    byte indexValue = this.device.MMU.Stream.ReadByte(position, jumpBack: true);
 
-                    TileData tileData = tileDatas[indexValue];
-                    Bitmap tileBitmap = tileData.GetTile();
+                    TileData tileData = null;
 
-                    Graphics graphics = Graphics.FromImage(bitmap);
-                    graphics.DrawImage(tileBitmap, (x * tileBitmap.Width), (y * tileBitmap.Height));
+                    for(int i = 0; i < this.tileData.Length; i++)
+                    {
+                        if (this.tileData[i].Index == indexValue)
+                        {
+                            tileData = this.tileData[i];
+                        }
+                    }
+
+                    if(tileData != null)
+                    {
+                        Bitmap tileBitmap = tileData.GenerateBitmap();
+                        graphics.DrawImage(tileBitmap, (x * tileBitmap.Width), (y * tileBitmap.Height));
+
+                        position++;
+
+                    }
+                    else
+                    {
+                        throw new Exception("TileData index not found: " + indexValue);
+                    }
                 }
             }
 
-            bitmap.Save(string.Format(@".\tilemap\tilemap_{0}.png", region.Start), System.Drawing.Imaging.ImageFormat.Png);
+            return bitmap;
+        }
+
+        public Bitmap DrawTileData()
+        {
+            int rows = (this.tileData.Length / 16);
+
+            Bitmap bitmap = new Bitmap(16 * 8, rows * 8);
+            Graphics graphics = Graphics.FromImage(bitmap);
+
+            int counter = 0;
+            for (int y = 0; y < rows; y++)
+            {
+                for (int x = 0; x < 16; x++)
+                {
+                    TileData tileData = this.tileData[counter];//[(y * 8) + x];
+
+                    Bitmap tileBitmap = tileData.GenerateBitmap();
+                    graphics.DrawImage(tileBitmap, (x * tileBitmap.Width), (y * tileBitmap.Height));
+                    counter++;
+                }
+            }
+
+            return bitmap;
         }
 
         protected virtual void OnPictureDrawn(Bitmap image)

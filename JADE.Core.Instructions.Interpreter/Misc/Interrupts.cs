@@ -8,18 +8,19 @@ using System.Threading.Tasks;
 
 namespace JADE.Core.Instructions.Interpreter.Misc
 {
+    //TODO you know what to do
     [Instruction(0xF3, "DI")]
     public class DI : IInstruction
     {
         public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
             return true;
         }
 
         public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
             return 4;
         }
     }
@@ -29,13 +30,13 @@ namespace JADE.Core.Instructions.Interpreter.Misc
     {
         public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
             return true;
         }
 
         public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
             return 4;
         }
     }

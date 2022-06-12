@@ -127,38 +127,39 @@ namespace JADE.IO
             }
             else
             {
-                //TODO add error handling
-                if (buffer == null)
-                {
-                    throw new ArgumentNullException("buffer");
-                }
-                else
-                {
-                    if (buffer.Length < count)
-                    {
-                        throw new ArgumentException("count is larger then buffer");
-                    }
-                    if (buffer.Length < offset)
-                    {
-                        throw new ArgumentException("");
-                    }
+                baseStream.Write(buffer, offset, count);
+                ////TODO add error handling
+                //if (buffer == null)
+                //{
+                //    throw new ArgumentNullException("buffer");
+                //}
+                //else
+                //{
+                //    if (buffer.Length < count)
+                //    {
+                //        throw new ArgumentException("count is larger then buffer");
+                //    }
+                //    if (buffer.Length < offset)
+                //    {
+                //        throw new ArgumentException("");
+                //    }
 
-                    //TODO add range check
-                    int rem = 0;
-                    while (rem < count)
-                    {
-                        if (this.Position >= Length)
-                        {
-                            throw new EndOfStreamException();
-                        }
-                        else
-                        {
-                            baseStream.Write(buffer, offset + rem, 1);
-                            //this.Position++;
-                            rem++;
-                        }
-                    }
-                }
+                //    //TODO add range check
+                //    int rem = 0;
+                //    while (rem < count)
+                //    {
+                //        if (this.Position >= Length)
+                //        {
+                //            throw new EndOfStreamException();
+                //        }
+                //        else
+                //        {
+                //            baseStream.Write(buffer, offset + rem, 1);
+                //            //this.Position++;
+                //            rem++;
+                //        }
+                //    }
+                //}
             }
         }
 
