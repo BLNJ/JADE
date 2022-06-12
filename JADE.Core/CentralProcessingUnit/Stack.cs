@@ -30,7 +30,7 @@ namespace JADE.Core.CentralProcessingUnit
         public void PushByte(byte value)
         {
             this.Value--;
-            base.MMU.Stream.WriteByte(this.Value, value);
+            base.MMU.Stream.WriteByte(this.Value, value, jumpBack: true);
         }
 
         public ushort PopUShort()
@@ -47,7 +47,7 @@ namespace JADE.Core.CentralProcessingUnit
 
         public byte PopByte()
         {
-            byte value = base.MMU.Stream.ReadByte(this.Value);
+            byte value = base.MMU.Stream.ReadByte(this.Value, jumpBack: true);
             this.Value++;
 
             return value;

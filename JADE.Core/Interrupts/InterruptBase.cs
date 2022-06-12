@@ -36,13 +36,13 @@ namespace JADE.Core.Interrupts
 
         public byte ReadByte(ushort address)
         {
-            byte flags = mmu.Stream.ReadByte(BaseAddress + address);
+            byte flags = mmu.Stream.ReadByte(BaseAddress + address, jumpBack: true);
             return flags;
         }
 
         public void WriteByte(ushort address, byte value)
         {
-            mmu.Stream.WriteByte(BaseAddress + address, value);
+            mmu.Stream.WriteByte(BaseAddress + address, value, jumpBack: true);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace JADE.Core.PictureProcessingUnit
         {
             get
             {
-                byte value = this.device.MMU.Stream.ReadByte(0xFF46);
+                byte value = this.device.MMU.Stream.ReadByte(0xFF46, jumpBack: true);
                 ushort address = (ushort)(value * 0x100);
 
                 return address;
@@ -52,7 +52,7 @@ namespace JADE.Core.PictureProcessingUnit
             set
             {
                 byte address = (byte)(value / 0x100);
-                this.device.MMU.Stream.WriteByte(0xFF46, address);
+                this.device.MMU.Stream.WriteByte(0xFF46, address, jumpBack: true);
             }
         }
         /// <summary>
@@ -62,12 +62,12 @@ namespace JADE.Core.PictureProcessingUnit
         {
             get
             {
-                byte value = this.device.MMU.Stream.ReadByte(0xFF44);
+                byte value = this.device.MMU.Stream.ReadByte(0xFF44, jumpBack: true);
                 return value;
             }
             set
             {
-                this.device.MMU.Stream.WriteByte(0xFF44, value);
+                this.device.MMU.Stream.WriteByte(0xFF44, value, jumpBack: true);
             }
         }
         /// <summary>
@@ -77,12 +77,12 @@ namespace JADE.Core.PictureProcessingUnit
         {
             get
             {
-                byte value = this.device.MMU.Stream.ReadByte(0xFF45);
+                byte value = this.device.MMU.Stream.ReadByte(0xFF45, jumpBack: true);
                 return value;
             }
             set
             {
-                this.device.MMU.Stream.WriteByte(0xFF45, value);
+                this.device.MMU.Stream.WriteByte(0xFF45, value, jumpBack: true);
             }
         }
 

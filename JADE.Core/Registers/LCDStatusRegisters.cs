@@ -12,11 +12,11 @@ namespace JADE.Core.Registers
         {
             get
             {
-                return base.mmu.Stream.ReadByte(0xFF41);
+                return base.mmu.Stream.ReadByte(0xFF41, jumpBack: true);
             }
             set
             {
-                base.mmu.Stream.WriteByte(0xFF41, value);
+                base.mmu.Stream.WriteByte(0xFF41, value, jumpBack: true);
             }
         }
         public bool LYC_LY_CoincidenceInterrupt

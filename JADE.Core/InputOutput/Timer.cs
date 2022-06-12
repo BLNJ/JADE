@@ -101,11 +101,11 @@ namespace JADE.Core.InputOutput
 
         private byte ReadData(long offset)
         {
-            return this.mmu.Stream.ReadByte(offset);
+            return this.mmu.Stream.ReadByte(offset, jumpBack: true);
         }
         private void WriteData(long offset, byte value)
         {
-            this.mmu.Stream.WriteByte(offset, value);
+            this.mmu.Stream.WriteByte(offset, value, jumpBack: true);
         }
 
         public enum Speed : byte

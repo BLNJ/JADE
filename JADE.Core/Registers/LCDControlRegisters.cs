@@ -12,12 +12,12 @@ namespace JADE.Core.Registers
         {
             get
             {
-                byte value = base.mmu.Stream.ReadByte(0xFF40);
+                byte value = base.mmu.Stream.ReadByte(0xFF40, jumpBack: true);
                 return value;
             }
             set
             {
-                base.mmu.Stream.WriteByte(0xFF40, value);
+                base.mmu.Stream.WriteByte(0xFF40, value, jumpBack: true);
             }
         }
         public bool LCDEnabled

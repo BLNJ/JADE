@@ -274,24 +274,24 @@ namespace JADE.Core.MemoryManagementUnit
         {
             Write(this.Position, value);
         }
-        public void Write(long offset, object value)
+        public void Write(long offset, object value, bool jumpBack = false)
         {
             Type valueType = value.GetType();
             if(valueType == typeof(ushort))
             {
-                this.WriteUShort(offset, (ushort)value);
+                this.WriteUShort(offset, (ushort)value, jumpBack: jumpBack);
             }
             else if(valueType == typeof(short))
             {
-                this.WriteShort(offset, (short)value);
+                this.WriteShort(offset, (short)value, jumpBack: jumpBack);
             }
             else if(valueType == typeof(byte[]))
             {
-                this.WriteBytes(offset, (byte[])value);
+                this.WriteBytes(offset, (byte[])value, jumpBack: jumpBack);
             }
             else if(valueType == typeof(byte))
             {
-                this.WriteByte(offset, (byte)value);
+                this.WriteByte(offset, (byte)value, jumpBack: jumpBack);
             }
             else
             {
