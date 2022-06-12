@@ -14,49 +14,47 @@ namespace JADE.Core.Instructions.Interpreter.Load
         [Instruction(0xF0, "LDH A, (FF00 + n)")]
         public class nn_relative : IInstruction
         {
-            byte? value = null;
+            byte? lowAddress = null;
 
             public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
             {
-                parametersList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedByte);
-
-                if(opCode == 0xE0)
+                if (lowAddress == null)
                 {
-                    parametersList.AddRegister(ParameterRegister.A);
-                    return true;
+                    parametersList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedByte);
+                    return false;
                 }
                 else
                 {
-                    if(value == null)
+                    if (opCode == 0xE0)
                     {
-                        return false;
+                        parametersList.AddRegister(ParameterRegister.A);
+                        return true;
                     }
                     else
                     {
-                        parametersList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, (0xFF00 + value.Value));
+                        parametersList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, (0xFF00 + lowAddress.Value));
                         return true;
+
                     }
                 }
             }
 
             public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
             {
-                byte value = (byte)parametersList[0].Value;
-
-                if (opCode == 0xE0)
+                if (lowAddress == null)
                 {
-                    byte registerA = (byte)parametersList[1].Value;
-                    changesList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, (0xFF00 + value), registerA);
+                    lowAddress = (byte)parametersList[0].Value;
                 }
                 else
                 {
-                    if(this.value == null)
+                    if (opCode == 0xE0)
                     {
-                        this.value = value;
+                        byte registerA = (byte)parametersList[0].Value;
+                        changesList.AddMemory(Bridge.Memory.ParameterRequestType.UnsignedByte, (0xFF00 + lowAddress.Value), registerA);
                     }
                     else
                     {
-                        byte memoryValue = (byte)parametersList[1].Value;
+                        byte memoryValue = (byte)parametersList[0].Value;
                         changesList.AddRegister(ParameterRegister.A, memoryValue);
                     }
                 }
