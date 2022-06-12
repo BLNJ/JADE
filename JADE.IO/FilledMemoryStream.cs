@@ -23,10 +23,14 @@ namespace JADE.IO
 
         private void FillZero()
         {
+            base.Position = 0;
+
             for (int i = 0; i < this.Capacity; i++)
             {
                 this.WriteByte(0);
             }
+
+            base.Position = 0;
         }
 
         private void FillRandom()
