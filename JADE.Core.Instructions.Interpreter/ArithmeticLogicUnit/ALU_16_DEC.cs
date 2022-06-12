@@ -22,16 +22,16 @@ namespace JADE.Core.Instructions.Interpreter.ArithmeticLogicUnit
                 ParameterRegister register;
                 switch (opCode)
                 {
-                    case 0x09:
+                    case 0x0B:
                         register = ParameterRegister.BC;
                         break;
-                    case 0x19:
+                    case 0x1B:
                         register = ParameterRegister.DE;
                         break;
-                    case 0x29:
+                    case 0x2B:
                         register = ParameterRegister.HL;
                         break;
-                    case 0x39:
+                    case 0x3B:
                         register = ParameterRegister.SP;
                         break;
 
