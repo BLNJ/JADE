@@ -110,26 +110,18 @@ namespace JADE.Core
 
         private void testLoop()
         {
+            byte cpuCycles = 0;
             while (true)
             {
-                this.CPU.Step();
-                this.PPU.Step();
-            }
-        }
+                cpuCycles = this.CPU.Cycle();
 
-        private void CPULoop()
-        {
-            while (true)
-            {
-                this.CPU.Step();
-            }
-        }
+                for(int i = 0; i < cpuCycles; i++)
+                {
+                    this.PPU.Cycle();
+                }
 
-        private void GPULoop()
-        {
-            while (true)
-            {
-                this.PPU.Step();
+
+                OnDebugTick();
             }
         }
 

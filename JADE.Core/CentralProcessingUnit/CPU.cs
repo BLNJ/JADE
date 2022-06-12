@@ -95,7 +95,7 @@ namespace JADE.Core.CentralProcessingUnit
             this.instructionManager.Initialize();
         }
 
-        public void Step()
+        public byte Cycle()
         {
             if (this.InterruptMasterEnable) //TODO checks missing?
             {
@@ -187,6 +187,7 @@ namespace JADE.Core.CentralProcessingUnit
             //}
 
             byte cycles = this.instructionManager.CycleInstruction(op, isExtended, opPC);
+            return cycles;
         }
 
     }
