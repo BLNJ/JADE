@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JADE.Core.Instructions.Inte
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JADE.UI.WinWPF", "JADE.UI.WinWPF\JADE.UI.WinWPF.csproj", "{7740934A-F22C-4D8C-8D36-09FF804B0DC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JADE.Core.UnitTest", "JADE.Core.UnitTest\JADE.Core.UnitTest.csproj", "{5314E329-95CA-4AE9-B63F-9BDA83EF0AF5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JADE.Core.UnitTest", "JADE.Core.UnitTest\JADE.Core.UnitTest.csproj", "{5314E329-95CA-4AE9-B63F-9BDA83EF0AF5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
