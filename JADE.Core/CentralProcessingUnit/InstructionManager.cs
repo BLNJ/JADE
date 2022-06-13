@@ -587,7 +587,12 @@ namespace JADE.Core.CentralProcessingUnit
                     break;
 
                 case Instructions.Bridge.Register.ParameterRegister.PC:
+                    value = this.cpu.Registers.PC;
+                    break;
                 case Instructions.Bridge.Register.ParameterRegister.SP:
+                    value = this.cpu.Registers.SP;
+                    break;
+
                 default:
                     throw new Exception("Cant request register " + parameterRegister);
             }
@@ -639,8 +644,10 @@ namespace JADE.Core.CentralProcessingUnit
                 case Instructions.Bridge.Register.ParameterRegister.SP:
                     this.cpu.Registers.SP = (ushort)value;
                     break;
-
                 case Instructions.Bridge.Register.ParameterRegister.PC:
+                    this.cpu.Registers.PC = (ushort)value;
+                    break;
+
                 default:
                     throw new Exception("Cant request register " + parameterRegister);
             }
