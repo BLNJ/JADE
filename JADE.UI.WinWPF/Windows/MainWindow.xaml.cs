@@ -96,6 +96,7 @@ namespace JADE.UI.WinWPF.Windows
 
             this.dtLastUpdate = DateTime.Now;
             device.Start();
+            this.ppuRegisters.DataContext = this.device.PPU.LCDPosition;
         }
 
         private void drawEverything()
@@ -104,22 +105,22 @@ namespace JADE.UI.WinWPF.Windows
             {
                 processFPS();
 
-                DateTime dtBefore = DateTime.Now;
+                //DateTime dtBefore = DateTime.Now;
                 System.Drawing.Bitmap background = this.device.PPU.DrawBackground();
-                System.Drawing.Bitmap window = this.device.PPU.DrawWindow();
+                //System.Drawing.Bitmap window = this.device.PPU.DrawWindow();
                 System.Drawing.Bitmap tileData = this.device.PPU.EverythingTileTable.DrawTileTable(); //this.device.PPU.DrawTileData();
-                DateTime dtEnd = DateTime.Now;
+                //DateTime dtEnd = DateTime.Now;
 
-                var time = (dtEnd - dtBefore);
-                Console.WriteLine(time);
-                System.Diagnostics.Debug.WriteLine(time);
+                //var time = (dtEnd - dtBefore);
+                //Console.WriteLine(time);
+                //System.Diagnostics.Debug.WriteLine(time);
 
                 try
                 {
                     this.Dispatcher.Invoke(() =>
                     {
                         bitmapToFrontendImage(imgBackground, background);
-                        bitmapToFrontendImage(imgWindow, window);
+                        //bitmapToFrontendImage(imgWindow, window);
                         bitmapToFrontendImage(imgTileData, tileData);
                     });
                 }
@@ -167,8 +168,8 @@ namespace JADE.UI.WinWPF.Windows
                 bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
                 ms.Seek(0, System.IO.SeekOrigin.Begin);
 
-                if(imageControl.Source == null)
-                {
+                //if(imageControl.Source == null)
+                //{
                     BitmapImage bitmapImage = new BitmapImage();
                     bitmapImage.BeginInit();
                     bitmapImage.StreamSource = ms;
@@ -176,11 +177,11 @@ namespace JADE.UI.WinWPF.Windows
                     bitmapImage.EndInit();
 
                     imageControl.Source = bitmapImage;
-                }
-                else
-                {
-                    ((BitmapImage)imageControl.Source).StreamSource = ms;
-                }
+                //}
+                //else
+                //{
+                //    ((BitmapImage)imageControl.Source).StreamSource = ms;
+                //}
             }
         }
     }

@@ -78,6 +78,22 @@
             </UniformGrid>
         </GroupBox>
 
+        <GroupBox x:Name="ppuRegisters" Header="PPU Registers" Height="158" Width="228" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0,0,0,278" DataContext="{Binding PPU.LCDPosition}">
+            <UniformGrid>
+                <UniformGrid Grid.Column="0" Columns="1">
+                    <TextBlock Text="{Binding LY, Mode=OneWay, StringFormat=LY: \{0\}}"/>
+                    <TextBlock Text="{Binding LYC, Mode=OneWay, StringFormat=LYC: \{0\}}"/>
+                </UniformGrid>
+                <UniformGrid Grid.Column="1" Columns="1">
+                    <TextBlock x:Name="tbppuWindowX" Text="{Binding WindowX, Mode=OneWay, StringFormat=WindowX: \{0\}}"/>
+                    <TextBlock x:Name="tbppuWindowY" Text="{Binding WindowY, Mode=OneWay, StringFormat=WindowY: \{0\}}"/>
+
+                    <TextBlock Text="{Binding ScrollX, Mode=OneWay, StringFormat=ScrollX: \{0\}}"/>
+                    <TextBlock Text="{Binding ScrollY, Mode=OneWay, StringFormat=ScrollY: \{0\}}"/>
+                </UniformGrid>
+            </UniformGrid>
+        </GroupBox>
+
         <GroupBox Header="TileData" Width="268" Height="279" HorizontalAlignment="Left" VerticalAlignment="Bottom">
             <Border BorderThickness="1" BorderBrush="Black" Height="256" Width="256">
                 <Image x:Name="imgTileData"/>
