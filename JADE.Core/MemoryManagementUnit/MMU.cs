@@ -107,7 +107,16 @@ namespace JADE.Core.MemoryManagementUnit
         }
         public MappedMemoryRegion FindMappedMemory(ushort position)
         {
-            List<MappedMemoryRegion> memoryRegions = this.MappedMemory.FindAll(reg => reg.Start <= position && (reg.End - 1) >= position);
+            //List<MappedMemoryRegion> memoryRegions = this.MappedMemory.FindAll(reg => reg.Start <= position && (reg.End - 1) >= position);
+
+            List<MappedMemoryRegion> memoryRegions = new List<MappedMemoryRegion>();
+            this.MappedMemory.ForEach(reg =>
+            {
+                if(reg.Start <= position && (reg.End - 1) >= position)
+                {
+                    memoryRegions.Add(reg);
+                }
+            });
 
             if(memoryRegions.Count == 1)
             {
