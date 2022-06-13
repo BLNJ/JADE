@@ -21,6 +21,7 @@ namespace JADE.Core.Instructions.Interpreter.Misc
         public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
         {
             //throw new NotImplementedException();
+            changesList.AddMasterInterrupt(false);
             return 4;
         }
     }
@@ -37,6 +38,7 @@ namespace JADE.Core.Instructions.Interpreter.Misc
         public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
         {
             //throw new NotImplementedException();
+            changesList.AddMasterInterrupt(true);
             return 4;
         }
     }

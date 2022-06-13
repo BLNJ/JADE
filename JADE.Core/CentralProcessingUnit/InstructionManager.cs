@@ -360,6 +360,11 @@ namespace JADE.Core.CentralProcessingUnit
                         throw new NotImplementedException("Unknown JumpInstructionParameterResponse ValueType: " + valueType.ToString());
                     }
                 }
+                else if(changeType == typeof(Instructions.Bridge.MasterInterrupt.MasterInterruptInstructionParameterResponse))
+                {
+                    bool status = (bool)proposedChange.Value;
+                    this.cpu.InterruptMasterEnable = status;
+                }
                 else
                 {
                     throw new NotImplementedException("Couldnt process unknown Type: " + changeType.ToString());

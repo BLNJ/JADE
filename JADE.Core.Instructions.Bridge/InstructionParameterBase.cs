@@ -40,7 +40,8 @@ namespace JADE.Core.Instructions.Bridge
             Stack,
             Call,
             Return,
-            Jump
+            Jump,
+            MasterInterrupt
         }
     }
 }

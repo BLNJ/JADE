@@ -173,5 +173,10 @@ namespace JADE.Core.Instructions.Bridge
         {
             changesList.Add(new Jump.JumpInstructionParameterResponse(value));
         }
+
+        public static void AddMasterInterrupt(this List<InstructionParameterResponseBase> changesList, bool masterInterruptStatus)
+        {
+            changesList.Add(new MasterInterrupt.MasterInterruptInstructionParameterResponse(masterInterruptStatus));
+        }
     }
 }
