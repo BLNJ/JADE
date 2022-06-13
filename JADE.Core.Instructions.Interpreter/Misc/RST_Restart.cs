@@ -22,13 +22,15 @@ namespace JADE.Core.Instructions.Interpreter.Misc
         {
             public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
             {
+                parametersList.AddRegister(ParameterRegister.PC);
                 return true;
             }
 
             public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
             {
+                ushort pc = (ushort)parametersList[0].Value;
                 byte pcLocation = opCodeToLocation(opCode);
-                InstructionMethods.Call(pcLocation);
+                InstructionMethods.Call(ref changesList, pc, pcLocation);
 
                 return 32;
             }

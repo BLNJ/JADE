@@ -89,12 +89,14 @@ namespace JADE.Core.Instructions.Interpreter.Jump
         {
             public bool PrepareParameters(byte opCode, ref List<InstructionParameterRequestBase> parametersList)
             {
-                throw new NotImplementedException();
+                return true;
             }
 
             public byte Process(byte opCode, ref List<InstructionParameterResponseBase> parametersList, ref List<InstructionParameterResponseBase> changesList)
             {
-                throw new NotImplementedException();
+                changesList.AddReturn();
+                changesList.AddMasterInterrupt(true);
+
                 return 8;
             }
         }
