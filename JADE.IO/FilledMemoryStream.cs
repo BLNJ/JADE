@@ -9,6 +9,17 @@ namespace JADE.IO
 {
     public class FilledMemoryStream : MemoryStream
     {
+        public FilledMemoryStream(byte[] byteArray, bool random = false) : base(byteArray)
+        {
+            if (random)
+            {
+                FillRandom();
+            }
+            else
+            {
+                FillZero();
+            }
+        }
         public FilledMemoryStream(ushort length, bool random = false) : base(length)
         {
             if (random)
