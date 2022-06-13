@@ -95,6 +95,14 @@ namespace JADE.Core.CentralProcessingUnit
             this.instructionManager.Initialize();
         }
 
+        private void interruptCall(ushort location)
+        {
+            List<InstructionParameterResponseBase> changes = new List<InstructionParameterResponseBase>();
+            Instructions.Bridge.InstructionMethods.Call(ref changes, this.Registers.PC, location);
+
+            this.instructionManager.ProcessProposedChanges(changes);
+        }
+
         public byte Cycle()
         {
             if (this.InterruptMasterEnable) //TODO checks missing?
@@ -104,23 +112,28 @@ namespace JADE.Core.CentralProcessingUnit
 
                 if (this.InterruptEnabled.VBlank)
                 {
-                    JADE.Core.Instructions.Bridge.InstructionMethods.Call(0x40);
+                    //JADE.Core.Instructions.Bridge.InstructionMethods.Call(0x40);
+                    interruptCall(0x40);
                 }
                 else if (this.InterruptEnabled.LCD_STAT)
                 {
-                    JADE.Core.Instructions.Bridge.InstructionMethods.Call(0x48);
+                    //JADE.Core.Instructions.Bridge.InstructionMethods.Call(0x48);
+                    interruptCall(0x48);
                 }
                 else if (this.InterruptEnabled.Timer)
                 {
-                    JADE.Core.Instructions.Bridge.InstructionMethods.Call(0x50);
+                    //JADE.Core.Instructions.Bridge.InstructionMethods.Call(0x50);
+                    interruptCall(0x50);
                 }
                 else if (this.InterruptEnabled.Serial)
                 {
-                    JADE.Core.Instructions.Bridge.InstructionMethods.Call(0x58);
+                    //JADE.Core.Instructions.Bridge.InstructionMethods.Call(0x58);
+                    interruptCall(0x58);
                 }
                 else if (this.InterruptEnabled.Joypad)
                 {
-                    JADE.Core.Instructions.Bridge.InstructionMethods.Call(0x60);
+                    //JADE.Core.Instructions.Bridge.InstructionMethods.Call(0x60);
+                    interruptCall(0x60);
                 }
 
                 this.InterruptMasterEnable = false;

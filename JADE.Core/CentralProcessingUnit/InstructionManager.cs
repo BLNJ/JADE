@@ -107,7 +107,7 @@ namespace JADE.Core.CentralProcessingUnit
                     //this.instructionHistory.AddEntry(opCodeProgramCounter, isExtended, opCode, parameters, preparedParameters, proposedChanges);
                     //Easy solution would be to fuck everything thats not Windows... but at that point I could go back to the stoneage and use .NET Framework
 
-                    processProposedChanges(proposedChanges);
+                    ProcessProposedChanges(proposedChanges);
                 }
                 while (!finishPrepare);
 
@@ -115,7 +115,7 @@ namespace JADE.Core.CentralProcessingUnit
             }
         }
 
-        private void processProposedChanges(List<Instructions.Bridge.InstructionParameterResponseBase> proposedChanges)
+        public void ProcessProposedChanges(List<Instructions.Bridge.InstructionParameterResponseBase> proposedChanges)
         {
             for(int i = 0; i < proposedChanges.Count; i++)
             {
