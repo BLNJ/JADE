@@ -51,17 +51,17 @@ namespace JADE.Core.MemoryManagementUnit
         {
             get
             {
-                lock (locker)
-                {
+                //lock (locker)
+                //{
                     return this.position;
-                }
+                //}
             }
             set
             {
-                lock (locker)
-                {
+                //lock (locker)
+                //{
                     this.position = value;
-                }
+                //}
             }
         }
 
@@ -155,7 +155,7 @@ namespace JADE.Core.MemoryManagementUnit
                 this.Position = offset;
                 ret = Read(buffer, 0, 1);
 
-                if(jumpBack)
+                if (jumpBack)
                 {
                     this.Position = oldPosition;
                 }
@@ -188,15 +188,15 @@ namespace JADE.Core.MemoryManagementUnit
                 }
 
                 int internalCount = 0;
-                while (internalCount < count)
-                {
+                //while (internalCount < count)
+                //{
                     if (this.Position >= this.Length)
                     {
                         throw new EndOfStreamException();
                     }
 
-                    lock (locker)
-                    {
+                    //lock (locker)
+                    //{
                         MappedMemoryRegion mappedMemory = this.mmu.FindMappedMemory((ushort)(this.Position));
                         if (mappedMemory == null)
                         {
@@ -205,12 +205,14 @@ namespace JADE.Core.MemoryManagementUnit
                         else
                         {
                             mappedMemory.ExternalMemory.Position = (this.Position - mappedMemory.Start);
-                            mappedMemory.ExternalMemory.Read(buffer, offset + internalCount, 1);
-                            internalCount++;
-                            Position++;
+                            //mappedMemory.ExternalMemory.Read(buffer, offset + internalCount, 1);
+                            internalCount = mappedMemory.ExternalMemory.Read(buffer, offset, count);
+                            //internalCount++;
+                            //Position++;
+                            Position += internalCount;
                         }
-                    }
-                }
+                    //}
+                //}
 
                 return internalCount;
             }
@@ -260,14 +262,17 @@ namespace JADE.Core.MemoryManagementUnit
         }
         public void WriteByte(long offset, byte value, bool jumpBack = false)
         {
-            long oldPosition = this.Position;
-
-            this.Position = offset;
-            this.Write(new byte[] { value }, 0, 1);
-
-            if(jumpBack)
+            lock (locker)
             {
-                this.Position = oldPosition;
+                long oldPosition = this.Position;
+
+                this.Position = offset;
+                this.Write(new byte[] { value }, 0, 1);
+
+                if (jumpBack)
+                {
+                    this.Position = oldPosition;
+                }
             }
         }
         public void Write(object value)
@@ -315,15 +320,15 @@ namespace JADE.Core.MemoryManagementUnit
                     throw new ArgumentException("");
                 }
 
-                int internalCount = 0;
-                while (internalCount < count)
-                {
+                //int internalCount = 0;
+                //while (internalCount < count)
+                //{
                     if (this.Position >= this.Length)
                     {
                         throw new EndOfStreamException();
                     }
-                    lock (locker)
-                    {
+                    //lock (locker)
+                    //{
                         MappedMemoryRegion mappedMemory = this.mmu.FindMappedMemory((ushort)(this.Position));
                         if (mappedMemory == null)
                         {
@@ -332,12 +337,14 @@ namespace JADE.Core.MemoryManagementUnit
                         else
                         {
                             mappedMemory.ExternalMemory.Position = (this.Position - mappedMemory.Start);
-                            mappedMemory.ExternalMemory.Write(buffer, offset + internalCount, 1);
-                            internalCount++;
-                            Position++;
+                            //mappedMemory.ExternalMemory.Write(buffer, offset + internalCount, 1);
+                            //internalCount++;
+                            //Position++;
+                            mappedMemory.ExternalMemory.Write(buffer, offset, count);
+                            Position += count;
                         }
-                    }
-                }
+                    //}
+                //}
             }
         }
         #endregion
