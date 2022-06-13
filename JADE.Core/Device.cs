@@ -36,6 +36,7 @@ namespace JADE.Core
             private set;
         }
 
+        internal byte[] ioMapped;
         public IO.TriggerStream MappedIO
         {
             get;
@@ -90,7 +91,9 @@ namespace JADE.Core
         public void Reset(bool loadBootloader = false)
         {
             this.MMU.Reset(loadBootloader: loadBootloader);
-            this.MappedIO = new TriggerStream(new FilledMemoryStream(0x80, random: false));
+
+            this.ioMapped = new byte[0x80];
+            this.MappedIO = new TriggerStream(new FilledMemoryStream(this.ioMapped, random: false));
             this.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.IO, 0xFF00, 0x80, this.MappedIO, 0);
 
             //TODO 'Subscribe' doesnt know anthing about its range
@@ -104,14 +107,19 @@ namespace JADE.Core
         private void testLoop()
         {
             byte cpuCycles = 0;
+
             while (true)
             {
-                cpuCycles = this.CPU.Cycle();
-
-                for(int i = 0; i < cpuCycles; i++)
+                cpuCycles = 0;
+                for(int i = 0; i < 2; i++)
                 {
-                    this.PPU.Cycle();
+                    cpuCycles += this.CPU.Cycle();
                 }
+
+                //for (int i = 0; i < cpuCycles; i++)
+                //{
+                this.PPU.Cycle(1);
+                //}
 
 
                 OnDebugTick();
