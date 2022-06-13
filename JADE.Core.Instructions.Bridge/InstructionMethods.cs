@@ -436,7 +436,7 @@ namespace JADE.Core.Instructions.Bridge
         #endregion
 
         #region Call / Return
-        public static void Call(ushort address)
+        public static void Call(ref List<InstructionParameterResponseBase> changesList, ushort pc, ushort address)
         {
             //registers.SP--;
             //byte upper = registers.PC.GetUpper();
@@ -447,10 +447,13 @@ namespace JADE.Core.Instructions.Bridge
             //cpu.MMU.Stream.WriteByte(registers.SP, lower);
 
 
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
             //cpu.Stack.PushUShort(registers.PC);
 
             //registers.PC = address;
+
+            changesList.AddStackPush(pc);
+            changesList.AddRegister(Register.ParameterRegister.PC, address);
         }
 
         public static void Ret()
