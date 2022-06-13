@@ -52,36 +52,6 @@ namespace JADE.Core.PictureProcessingUnit
                 this.device.MMU.Stream.WriteByte(0xFF46, address, jumpBack: true);
             }
         }
-        /// <summary>
-        /// LY
-        /// </summary>
-        public byte LCDC_YCoordinate
-        {
-            get
-            {
-                byte value = this.device.MMU.Stream.ReadByte(0xFF44, jumpBack: true);
-                return value;
-            }
-            set
-            {
-                this.device.MMU.Stream.WriteByte(0xFF44, value, jumpBack: true);
-            }
-        }
-        /// <summary>
-        /// LYC
-        /// </summary>
-        public byte LineYCompare
-        {
-            get
-            {
-                byte value = this.device.MMU.Stream.ReadByte(0xFF45, jumpBack: true);
-                return value;
-            }
-            set
-            {
-                this.device.MMU.Stream.WriteByte(0xFF45, value, jumpBack: true);
-            }
-        }
 
         public byte CurrentScanline
         {
@@ -95,8 +65,10 @@ namespace JADE.Core.PictureProcessingUnit
         private Bitmap backgroundBitmap;
         private Bitmap windowBitmap;
 
+        internal byte[] VRAMRaw;
         internal MemoryStream VRAM;
         MemoryManagementUnit.MappedMemoryRegion VRAMRegion;
+        internal byte[] OAMRaw;
         internal MemoryStream OAM;
         MemoryManagementUnit.MappedMemoryRegion OAMRegion;
 
@@ -131,11 +103,15 @@ namespace JADE.Core.PictureProcessingUnit
             this.spriteAttributeTable = new SpriteAttributeTable(this);
 
             //VRAM
-            this.VRAM = new IO.FilledMemoryStream(0x2000, random: false); //TODO for dev purposes random is set to OFF (the bootstrap takes too long for the loop)
+            this.VRAMRaw = new byte[0x2000];
+            this.VRAM = new MemoryStream(this.VRAMRaw);
+            //this.VRAM = new IO.FilledMemoryStream(0x2000, random: false); //TODO for dev purposes random is set to OFF (the bootstrap takes too long for the loop)
             VRAMRegion = this.device.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.VRAM, 0x8000, this.VRAM);
 
             //OAM
-            this.OAM = new IO.FilledMemoryStream(0xA0, random: false);
+            this.OAMRaw = new byte[0xA0];
+            this.OAM = new MemoryStream(this.OAMRaw);
+            //this.OAM = new IO.FilledMemoryStream(0xA0, random: false);
             OAMRegion = this.device.MMU.AddMappedStream(MemoryManagementUnit.MappedMemoryRegion.Name.OAM, 0xFE00, this.OAM);
 
             this.LCDControlRegisters.Reset();
@@ -149,115 +125,165 @@ namespace JADE.Core.PictureProcessingUnit
         }
 
         int cycleProgress = 0;
-        public void Cycle()
+        public void Cycle(byte usedCPUCycles)
         {
             //Viewport?
 
-            if (LCDControlRegisters.LCDEnabled)
+            byte internalCount = 0;
+            bool drawFrame = false;
+
+            while (internalCount < usedCPUCycles)
             {
-                switch (this.LCDStatusRegisters.Mode)
+                if (LCDControlRegisters.LCDEnabled)
                 {
-                    case Registers.LCDStatusRegisters.ModeFlag.SearchingOAM:
-                        if(cycleProgress < 80)
-                        {
-                            cycleProgress++;
-                            return;
-                        }
-                        else
-                        {
-                            cycleProgress = 0;
-                            this.LCDStatusRegisters.Mode = Registers.LCDStatusRegisters.ModeFlag.TransferingData;
-                        }
-                        break;
-                    case Registers.LCDStatusRegisters.ModeFlag.TransferingData:
-                        if(cycleProgress < 289)
-                        {
-                            cycleProgress++;
-                        }
-                        else
-                        {
-                            this.OnPictureDrawn(null);
-                            cycleProgress = 0;
-                            this.LCDStatusRegisters.Mode = Registers.LCDStatusRegisters.ModeFlag.HBlank;
-                        }
-                        break;
-                    case Registers.LCDStatusRegisters.ModeFlag.HBlank:
-                        if(cycleProgress < 87)
-                        {
-                            cycleProgress++;
-                        }
-                        else
-                        {
-                            cycleProgress = 0;
-                            this.LCDStatusRegisters.Mode = Registers.LCDStatusRegisters.ModeFlag.VBlank;
-                        }
-                        break;
-                    case Registers.LCDStatusRegisters.ModeFlag.VBlank:
-                        if(cycleProgress < 4560)
-                        {
-                            cycleProgress++;
-                        }
-                        else
-                        {
-                            cycleProgress = 0;
-                            this.LCDStatusRegisters.Mode = Registers.LCDStatusRegisters.ModeFlag.SearchingOAM;
-                        }
-                        break;
+                    switch (this.LCDStatusRegisters.Mode)
+                    {
+                        case Registers.LCDStatusRegisters.ModeFlag.SearchingOAM:
+                            if (cycleProgress < 80)
+                            {
+                                cycleProgress++;
+                                return;
+                            }
+                            else
+                            {
+                                cycleProgress = 0;
+                                this.LCDStatusRegisters.Mode = Registers.LCDStatusRegisters.ModeFlag.TransferingData;
+                            }
+                            break;
+                        case Registers.LCDStatusRegisters.ModeFlag.TransferingData:
+                            if (cycleProgress < 289)
+                            {
+                                cycleProgress++;
+                            }
+                            else
+                            {
+                                drawFrame = true;
+                                //this.OnPictureDrawn(null);
+                                cycleProgress = 0;
+                                this.LCDStatusRegisters.Mode = Registers.LCDStatusRegisters.ModeFlag.HBlank;
+                            }
+                            break;
+                        case Registers.LCDStatusRegisters.ModeFlag.HBlank:
+                            if (cycleProgress == 0)
+                            {
+                                this.CurrentScanline = 0;
+                                //this.LCDC_YCoordinate = 0;
+                                this.LCDPosition.LY = 0;
+                            }
+
+                            if (cycleProgress < 204)
+                            {
+                                this.CurrentScanline++;
+                                //this.LCDC_YCoordinate++;
+                                this.LCDPosition.LY++;
+
+                                //if (LCDC_YCoordinate == LineYCompare)
+                                //{
+                                //    this.LCDStatusRegisters.CoincidenceFlag = true;
+                                //}
+                                if (this.LCDPosition.LY == this.LCDPosition.LYC)
+                                {
+                                    this.LCDStatusRegisters.CoincidenceFlag = true;
+                                }
+
+                                cycleProgress++;
+                            }
+                            else
+                            {
+                                cycleProgress = 0;
+                                this.LCDStatusRegisters.Mode = Registers.LCDStatusRegisters.ModeFlag.VBlank;
+                            }
+                            break;
+                        case Registers.LCDStatusRegisters.ModeFlag.VBlank:
+                            if (cycleProgress == 0)
+                            {
+                                this.device.CPU.InterruptEnabled.VBlank = true;
+                            }
+
+                            if (cycleProgress < 4560)
+                            {
+                                cycleProgress++;
+                            }
+                            else
+                            {
+                                cycleProgress = 0;
+                                this.LCDStatusRegisters.Mode = Registers.LCDStatusRegisters.ModeFlag.SearchingOAM;
+                            }
+                            break;
 
 
-                    default:
-                        throw new NotImplementedException("Unimplemented PPU Mode: " + this.LCDStatusRegisters.Mode);
+                        default:
+                            throw new NotImplementedException("Unimplemented PPU Mode: " + this.LCDStatusRegisters.Mode);
+                    }
+
+                    if (LCDControlRegisters.BackgroundDisplay)
+                    {
+                    }
                 }
 
-                if (LCDControlRegisters.BackgroundDisplay)
-                {
-                }
+                internalCount++;
+            }
+
+            if(drawFrame)
+            {
+                this.OnPictureDrawn(null);
             }
         }
 
         public Bitmap DrawBackground()
         {
-            return DrawTileMap(this.LCDControlRegisters.BackgroundTileMapRegion);
+            Bitmap bitmap = DrawTileMap(this.LCDControlRegisters.BackgroundTileMapRegion, ref this.backgroundBitmap);
+            DrawWindowBorder(bitmap);
+            return bitmap;
         }
 
         public Bitmap DrawWindow()
         {
-            return DrawTileMap(this.LCDControlRegisters.WindowTileTable);
+            Bitmap bitmap = DrawTileMap(this.LCDControlRegisters.WindowTileTable, ref this.windowBitmap);
+            DrawWindowBorder(bitmap);
+
+            return bitmap;
         }
 
-        public Bitmap DrawTileMap(Registers.LCDControlRegisters.MemoryRegion region)
+        public Bitmap DrawTileMap(Registers.LCDControlRegisters.MemoryRegion region, ref Bitmap bitmap)
         {
-            Bitmap bitmap = new Bitmap(256, 256);
-            Graphics graphics = Graphics.FromImage(bitmap);
+            //if(bitmap == null)
+            //{
+                bitmap = new Bitmap(256, 256);
+            //}
 
-            long position = region.Start;
-            for (int y = 0; y < 32; y++)
+            using (Graphics graphics = Graphics.FromImage(backgroundBitmap))
             {
-                for (int x = 0; x < 32; x++)
+                long position = (region.Start - 0x8000);
+                for (int y = 0; y < 32; y++)
                 {
-                    byte indexValue = this.device.MMU.Stream.ReadByte(position, jumpBack: true);
-
-                    TileData tileData = null;
-
-                    for(int i = 0; i < this.tileData.Length; i++)
+                    for (int x = 0; x < 32; x++)
                     {
-                        if (this.tileData[i].Index == indexValue)
+                        this.VRAM.Position = position;
+                        byte indexValue = (byte)this.VRAM.ReadByte(); //this.device.MMU.Stream.ReadByte(position, jumpBack: true);
+
+                        TileData tileData = null;
+
+                        for (int i = 0; i < this.tileData.Length; i++)
                         {
-                            tileData = this.tileData[i];
+                            if (this.tileData[i].Index == indexValue)
+                            {
+                                tileData = this.tileData[i];
+                            }
                         }
-                    }
 
-                    if(tileData != null)
-                    {
-                        Bitmap tileBitmap = tileData.GenerateBitmap();
-                        graphics.DrawImage(tileBitmap, (x * tileBitmap.Width), (y * tileBitmap.Height));
+                        if (tileData != null)
+                        {
+                            Bitmap tileBitmap = tileData.GenerateBitmap();
+                            graphics.DrawImage(tileBitmap, (x * tileBitmap.Width), (y * tileBitmap.Height));
 
-                        position++;
+                            position++;
 
-                    }
-                    else
-                    {
-                        throw new Exception("TileData index not found: " + indexValue);
+                        }
+                        else
+                        {
+                            throw new Exception("TileData index not found: " + indexValue);
+                        }
                     }
                 }
             }
@@ -286,6 +312,24 @@ namespace JADE.Core.PictureProcessingUnit
             }
 
             return bitmap;
+        }
+
+        public void DrawWindowBorder(Bitmap bitmap)
+        {
+            using(Graphics graphics = Graphics.FromImage(bitmap))
+            {
+                Pen pen = new Pen(Color.Pink);
+                //Upper line
+                graphics.DrawLine(pen, this.LCDPosition.WindowX + this.LCDPosition.ScrollX, this.LCDPosition.WindowY + this.LCDPosition.ScrollY, (this.LCDPosition.WindowX + this.LCDPosition.ScrollX + LCDWidth), this.LCDPosition.WindowY + this.LCDPosition.ScrollY);
+                //Left line
+                graphics.DrawLine(pen, this.LCDPosition.WindowX + this.LCDPosition.ScrollX, this.LCDPosition.WindowY + this.LCDPosition.ScrollY, this.LCDPosition.WindowX + this.LCDPosition.ScrollX, (this.LCDPosition.WindowY + this.LCDPosition.ScrollY + LCDHeight));
+                //Right line
+                graphics.DrawLine(pen, (this.LCDPosition.WindowX + this.LCDPosition.ScrollX + LCDWidth), this.LCDPosition.WindowY + this.LCDPosition.ScrollY, (this.LCDPosition.WindowX + this.LCDPosition.ScrollX + LCDWidth), (this.LCDPosition.WindowY + this.LCDPosition.ScrollY + LCDHeight));
+                //Bottom line
+                graphics.DrawLine(pen, this.LCDPosition.WindowX + this.LCDPosition.ScrollX, (this.LCDPosition.WindowY + this.LCDPosition.ScrollY + LCDHeight), (this.LCDPosition.WindowX + this.LCDPosition.ScrollX + LCDWidth), (this.LCDPosition.WindowY + this.LCDPosition.ScrollY + LCDHeight));
+
+                graphics.DrawString(string.Format("{0}:{1}", this.LCDPosition.ScrollY, this.LCDPosition.ScrollX), new Font("Arial", 6), Brushes.Pink, (this.LCDPosition.WindowX + this.LCDPosition.ScrollX), (this.LCDPosition.WindowY + this.LCDPosition.ScrollY));
+            }
         }
 
         protected virtual void OnPictureDrawn(Bitmap image)

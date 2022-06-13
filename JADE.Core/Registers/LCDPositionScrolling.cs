@@ -17,6 +17,7 @@ namespace JADE.Core.Registers
             set
             {
                 base.mmu.Stream.WriteByte(0xFF42, value, jumpBack: true);
+                OnPropertyChanged();
             }
         }
         public byte ScrollX
@@ -28,6 +29,7 @@ namespace JADE.Core.Registers
             set
             {
                 this.mmu.Stream.WriteByte(0xFF43, value, jumpBack: true);
+                OnPropertyChanged();
             }
         }
 
@@ -40,7 +42,8 @@ namespace JADE.Core.Registers
             set
             {
                 //this.mmu.WriteByte(0xFF44, value);
-                this.mmu.Stream.WriteByte(0xFF44, 0, jumpBack: true);
+                this.mmu.Stream.WriteByte(0xFF44, value, jumpBack: true);
+                OnPropertyChanged();
             }
         }
         public byte LYC
@@ -52,6 +55,7 @@ namespace JADE.Core.Registers
             set
             {
                 this.mmu.Stream.WriteByte(0xFF45, value, jumpBack: true);
+                OnPropertyChanged();
             }
         }
         public byte WindowY
@@ -63,17 +67,19 @@ namespace JADE.Core.Registers
             set
             {
                 this.mmu.Stream.WriteByte(0xFF4A, value, jumpBack: true);
+                OnPropertyChanged();
             }
         }
         public byte WindowX
         {
             get
             {
-                return this.mmu.Stream.ReadByte(0xFF4B, jumpBack: true);
+                return (byte)(this.mmu.Stream.ReadByte(0xFF4B, jumpBack: true) + 7);
             }
             set
             {
-                this.mmu.Stream.WriteByte(0xFF4B, value, jumpBack: true);
+                this.mmu.Stream.WriteByte(0xFF4B, (byte)(value - 7), jumpBack: true);
+                OnPropertyChanged();
             }
         }
 

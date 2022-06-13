@@ -69,10 +69,10 @@ namespace JADE.Core.Registers
             {
                 return this.lcd_status.GetBit(2);
             }
-            //set
-            //{
-            //    this.lcd_status = this.lcd_status.SetBit(2, value);
-            //}
+            set
+            {
+                this.lcd_status = this.lcd_status.SetBit(2, value);
+            }
         }
         public ModeFlag Mode
         {

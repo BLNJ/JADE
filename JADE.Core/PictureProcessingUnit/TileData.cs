@@ -41,7 +41,8 @@ namespace JADE.Core.PictureProcessingUnit
         {
             get
             {
-                return mmu.Stream.ReadBytes(Address, 16, jumpBack: true);
+                return this.ppu.VRAMRaw.AsMemory(this.Index * 16, 16).ToArray();
+                //return mmu.Stream.ReadBytes(Address, 16, jumpBack: true);
             }
         }
 
@@ -97,11 +98,8 @@ namespace JADE.Core.PictureProcessingUnit
 
         public Bitmap GenerateBitmap()
         {
-            if(this.cacheBitmap == null)
-            {
-                this.cacheBitmap = new Bitmap(SizeX, SizeY);
-            }
-            
+            this.cacheBitmap = new Bitmap(SizeX, SizeY);
+
             for (int y = 0; y < this.cacheBitmap.Height; y++)
             {
                 for (int x = 0; x < this.cacheBitmap.Width; x++)

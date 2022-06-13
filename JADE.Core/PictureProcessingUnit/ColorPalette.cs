@@ -25,11 +25,13 @@ namespace JADE.Core.PictureProcessingUnit
         {
             get
             {
-                return this.mmu.Stream.ReadByte(this.baseAddress, jumpBack: true);
+                //return this.mmu.Stream.ReadByte(this.baseAddress, jumpBack: true);
+                return this.ppu.device.ioMapped[this.baseAddress - 0xFF00];
             }
             set
             {
-                this.mmu.Stream.WriteByte(this.baseAddress, value, jumpBack: true);
+                //this.mmu.Stream.WriteByte(this.baseAddress, value, jumpBack: true);
+                this.ppu.device.ioMapped[this.baseAddress - 0xFF00] = value;
             }
         }
 
